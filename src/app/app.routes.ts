@@ -7,8 +7,7 @@ import { Inicio } from './inicio/inicio';
 import { AdminLayoutLayout } from './shared/admin-layout/admin-layout.layout';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'inicio', component: Inicio },
   { path: 'recetas', component: RecetaComponent },

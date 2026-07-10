@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Login } from './login';
+import { HttpClientTestingModule } from '@angular/common/http/testing';   
+import { AuthService } from '../../services/auth.service';
 
 describe('Login', () => {
   let component: Login;
@@ -8,16 +9,21 @@ describe('Login', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Login]
+      imports: [Login, HttpClientTestingModule], 
+      providers: [AuthService] 
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('should have empty credentials initially', () => {
+    expect(component.usuario.email).toBe('');
+    expect(component.usuario.password).toBe('');
   });
 });
