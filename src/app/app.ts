@@ -1,11 +1,10 @@
 import { Component, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RecetaComponent } from './receta/receta';
-
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RecetaComponent],   // agrega esto
+  imports: [RouterOutlet],   // ya no se importa RecetaComponent aquí
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

@@ -35,11 +35,42 @@
   box-shadow: 0 2px 10px rgba(27, 37, 89, 0.06);
 }
 
+/* ---- Encabezado de la página de detalle ---- */
+.detalle-encabezado-pagina {
+  margin-bottom: 12px;
+}
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--blue-accent);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.btn-volver:hover {
+  color: var(--blue-accent-hover);
+}
+
 .recetas-title {
   margin: 0 0 20px 0;
   color: var(--navy);
   font-size: 22px;
   font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.subtitulo-receta {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-gray);
 }
 
 /* ===================== Barra de búsqueda ===================== */
@@ -155,25 +186,6 @@
   color: var(--danger);
 }
 
-/* ===================== Badges de estado ===================== */
-.badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-activo {
-  background: var(--success-bg);
-  color: var(--success);
-}
-
-.badge-inactivo {
-  background: var(--inactive-bg);
-  color: var(--inactive-text);
-}
-
 /* ===================== Íconos de acciones ===================== */
 .celda-acciones {
   display: flex;
@@ -191,15 +203,6 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-.icono-ver {
-  color: var(--text-gray);
-}
-
-.icono-ver:hover {
-  background: #eef0f8;
-  color: var(--navy);
-}
-
 .icono-editar {
   color: var(--blue-accent);
 }
@@ -207,15 +210,6 @@
 .icono-editar:hover {
   background: #e8edfd;
   color: var(--blue-accent-hover);
-}
-
-.icono-eliminar {
-  color: var(--danger);
-}
-
-.icono-eliminar:hover {
-  background: #fbe8ec;
-  color: var(--danger-hover);
 }
 
 /* ===================== Modales ===================== */
@@ -238,10 +232,6 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 12px 40px rgba(27, 37, 89, 0.25);
-}
-
-.modal-pequena {
-  max-width: 400px;
 }
 
 .modal-encabezado {
@@ -281,32 +271,6 @@
   gap: 10px;
   padding: 16px 22px;
   border-top: 1px solid var(--border);
-}
-
-/* ---- Detalle (ver) ---- */
-.detalle-fila {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.detalle-fila:last-child {
-  border-bottom: none;
-}
-
-.detalle-etiqueta {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-gray);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.detalle-valor {
-  font-size: 14px;
-  color: var(--text-dark);
 }
 
 /* ---- Formulario ---- */
@@ -364,11 +328,6 @@
   color: var(--text-gray);
 }
 
-.texto-secundario {
-  color: var(--text-gray);
-  font-size: 13px;
-}
-
 .mensaje-error {
   color: var(--danger);
   font-size: 13px;
@@ -391,22 +350,6 @@
   background: #e4e6ee;
 }
 
-.btn-peligro {
-  background: var(--danger);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.btn-peligro:hover {
-  background: var(--danger-hover);
-}
-
 /* ===================== Responsive ===================== */
 @media (max-width: 640px) {
   .recetas-page {
@@ -419,14 +362,4 @@
     flex-direction: column;
     align-items: stretch;
   }
-  /* Agregar este bloque a receta.css, junto a los demás estilos de .icono-accion */
-
-.icono-detalle {
-  color: var(--success);
-}
-
-.icono-detalle:hover {
-  background: var(--success-bg);
-  color: #0f7a34;
-}
 }

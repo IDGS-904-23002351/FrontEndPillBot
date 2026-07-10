@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 export interface Receta {
   idReceta: number;
@@ -30,6 +31,7 @@ type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
 })
 export class RecetaComponent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   // Ajusta esta base si tu backend corre en otro puerto/ruta
   private readonly apiRecetas = 'https://localhost:7046/api/recetas';
@@ -90,6 +92,14 @@ export class RecetaComponent implements OnInit {
   nombreCliente(idCliente: number): string {
     const cliente = this.clientes().find(c => c.idCliente === idCliente);
     return cliente ? cliente.nombreCompleto : `Cliente #${idCliente}`;
+  }
+
+  // ---------- Navegación a Detalle de Receta ----------
+
+  irDetalleReceta(receta: Receta): void {
+    this.router.navigate(['/detalle-receta', receta.idReceta], {
+      queryParams: { padecimiento: receta.padecimiento ?? '' }
+    });
   }
 
   // ---------- Modales ----------
