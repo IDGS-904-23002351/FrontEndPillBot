@@ -5,6 +5,9 @@ import { Login } from './auth/login/login';
 import { Roles } from './roles/roles';
 import { Inicio } from './inicio/inicio';
 import { AdminLayoutLayout } from './shared/admin-layout/admin-layout.layout';
+import { ClienteLayout } from './shared/cliente-layout/cliente-layout';
+import { Carrito } from './cliente/carrito/carrito';
+import { Compras } from './cliente/compras/compras';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -26,6 +29,26 @@ export const routes: Routes = [
       { path: 'empleados', component: Roles },
       { path: 'usuarios', component: Roles },
       { path: 'ventas', component: Roles }
+    ]
+  },
+
+  {
+    path: 'cliente',
+    component: ClienteLayout,
+    children: [
+      {
+        path: '',
+        redirectTo: 'carrito',
+        pathMatch: 'full'
+      },
+      {
+        path: 'carrito',
+        component: Carrito
+      },
+      {
+        path: 'compras',
+        component: Compras
+      }
     ]
   },
 

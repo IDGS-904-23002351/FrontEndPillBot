@@ -1,0 +1,88 @@
+<section class="compras-page">
+
+  <div class="barra-superior">
+
+    <div class="titulo">
+      Compras del cliente
+    </div>
+
+  </div>
+
+  @if (compra()) {
+
+  <div class="mensaje-exito">
+    {{ compra()?.mensaje }}
+  </div>
+
+  <div class="tabla-container">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Folio de venta</th>
+          <th>Producto</th>
+          <th>Total</th>
+          <th>Estado de pago</th>
+          <th>Estado de envío</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr>
+
+          <td>
+            #{{ compra()?.idVenta }}
+          </td>
+
+          <td>
+            Pastillero PillBot
+          </td>
+
+          <td class="total-venta">
+            {{
+                compra()?.total |
+                currency:'MXN':'symbol':'1.2-2'
+            }}
+          </td>
+
+          <td>
+            <span class="estado pagado">
+              {{ compra()?.estadoPago }}
+            </span>
+          </td>
+
+          <td>
+            <span class="estado pendiente">
+              {{ compra()?.estadoEnvio }}
+            </span>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  } @else {
+
+  <div class="sin-compras">
+
+    <h2>No hay una compra procesada</h2>
+
+    <p>
+      Agrega un pastillero al carrito y confirma la compra.
+    </p>
+
+    <a routerLink="/cliente/carrito">
+      Ir al carrito
+    </a>
+
+  </div>
+
+  }
+
+</section>

@@ -1,0 +1,271 @@
+<section class="carrito-page">
+
+  <div class="barra-superior">
+
+    <input type="text"
+           [ngModel]="busqueda()"
+           (ngModelChange)="busqueda.set($event)"
+           placeholder="Buscar pastillero por nombre o SKU...">
+
+    <div class="titulo-modulo">
+      Pastilleros disponibles
+    </div>
+
+  </div>
+
+  @if (mensaje()) {
+  <div class="mensaje exito">
+    {{ mensaje() }}
+  </div>
+  }
+
+  @if (errorCarga()) {
+  <div class="mensaje error">
+    {{ errorCarga() }}
+  </div>
+  }
+
+  @if (idUsuario() > 0) {
+
+  <div class="seccion-titulo">
+    <h2>Catálogo de pastilleros</h2>
+  </div>
+
+  @if (cargandoProductos()) {
+
+  <div class="estado-carga">
+    Cargando pastilleros...
+  </div>
+
+  } @else {
+
+  <div class="tabla-container">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Pastillero</th>
+          <th>Descripción</th>
+          <th>SKU</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Cantidad</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        producto of productosFiltrados();
+        track producto.idProducto
+        ) {
+
+        <tr>
+
+          <td>
+            {{ producto.nombre }}
+          </td>
+
+          <td>
+            {{
+                    producto.descripcion ||
+                    'Sin descripción'
+            }}
+          </td>
+
+          <td>
+            {{ producto.sku }}
+          </td>
+
+          <td>
+            {{
+                    producto.precio |
+                    currency:'MXN':'symbol':'1.2-2'
+            }}
+          </td>
+
+          <td>
+            {{ producto.stock }}
+          </td>
+
+          <td>
+            <input #cantidad
+                   class="cantidad-input"
+                   type="number"
+                   min="1"
+                   [max]="producto.stock"
+                   value="1">
+          </td>
+
+          <td>
+            <button type="button"
+                    class="btn-agregar"
+                    (click)="agregarAlCarrito(
+                      producto,
+                      cantidad.value
+                    )">
+
+              Agregar
+            </button>
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="7"
+              class="tabla-vacia">
+
+            No hay pastilleros disponibles.
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+  <div class="seccion-titulo carrito-titulo">
+    <h2>Carrito</h2>
+  </div>
+
+  @if (cargandoCarrito()) {
+
+  <div class="estado-carga">
+    Consultando carrito...
+  </div>
+
+  } @else {
+
+  <div class="tabla-container">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Pastillero</th>
+          <th>Cantidad</th>
+          <th>Precio unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        articulo of carrito();
+        track articulo.idDetalleCarrito
+        ) {
+
+        <tr>
+
+          <td>
+            {{ articulo.nombreArticulo }}
+          </td>
+
+          <td>
+            {{ articulo.cantidad }}
+          </td>
+
+          <td>
+            {{
+                    articulo.precioUnitario |
+                    currency:'MXN':'symbol':'1.2-2'
+            }}
+          </td>
+
+          <td>
+            {{
+                    articulo.subtotal |
+                    currency:'MXN':'symbol':'1.2-2'
+            }}
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="4"
+              class="tabla-vacia">
+
+            El carrito está vacío.
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <div class="resumen-contenedor">
+
+    <aside class="resumen-pedido">
+
+      <h2>Resumen del pedido</h2>
+
+      <div class="resumen-fila">
+        <span>Pastilleros:</span>
+
+        <strong>
+          {{ cantidadTotal() }}
+        </strong>
+      </div>
+
+      <div class="resumen-fila">
+        <span>Subtotal:</span>
+
+        <strong>
+          {{
+                totalCarrito() |
+                currency:'MXN':'symbol':'1.2-2'
+          }}
+        </strong>
+      </div>
+
+      <div class="resumen-fila total">
+        <span>Total:</span>
+
+        <strong>
+          {{
+                totalCarrito() |
+                currency:'MXN':'symbol':'1.2-2'
+          }}
+        </strong>
+      </div>
+
+      <button type="button"
+              class="btn-confirmar"
+              [disabled]="
+              carrito().length === 0 ||
+              procesandoVenta()
+            "
+              (click)="confirmarCompra()">
+
+        {{
+              procesandoVenta()
+                ? 'Procesando...'
+                : 'Confirmar compra'
+        }}
+      </button>
+
+    </aside>
+
+  </div>
+
+  }
+
+  }
+
+</section>
