@@ -1,0 +1,22 @@
+<!-- shared/menu/menu.component.html -->
+<div class="sidebar">
+  <div class="user-info">
+    <h3>{{ userName }}</h3>
+    <span class="badge">{{ userRol }}</span>
+  </div>
+  
+  <nav class="menu">
+    <ul>
+      <li *ngFor="let item of menuItems">
+        <a [routerLink]="item.route" routerLinkActive="active">
+          <span class="material-icons">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+  
+  <button (click)="logout()" class="logout-btn">
+    Cerrar Sesión
+  </button>
+</div>

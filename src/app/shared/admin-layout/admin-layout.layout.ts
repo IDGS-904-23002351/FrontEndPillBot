@@ -1,11 +1,33 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+// shared/admin-layout/admin-layout.layout.ts
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { MenuComponent } from '../menu/menu.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterModule, MenuComponent],  // ← Importa
   templateUrl: './admin-layout.layout.html',
-  styleUrl: './admin-layout.layout.css',
+  styleUrls: ['./admin-layout.layout.css']
 })
-export class AdminLayoutLayout {}
+export class AdminLayoutLayout implements OnInit {
+  userName: string = '';
+  userRol: string = '';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.userName = this.authService.getUserName();
+    this.userRol = this.authService.getRol() || '';
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+}

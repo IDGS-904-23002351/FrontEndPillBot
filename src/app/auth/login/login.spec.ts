@@ -23,7 +23,7 @@ describe('Login', () => {
     expect(component).toBeTruthy();
   });
   it('should have empty credentials initially', () => {
-    expect(component.usuario.email).toBe('');
-    expect(component.usuario.password).toBe('');
+    expect(component.usuario.correo).toBe('');
+    expect(component.usuario.contrasena).toBe('');
   });
 });
