@@ -1,6 +1,6 @@
-// services/auth.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -9,13 +9,13 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/api/auth`;
   private userSubject = new BehaviorSubject<any>(null);
   public user$ = this.userSubject.asObservable();
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser: boolean;
 
   constructor(private http: HttpClient) {
-    // Recuperar sesión al iniciar la app
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.cargarSesion();
   }
-
-  // 🔹 INICIAR SESIÓN
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/loginWeb`, credentials)
       .pipe(
@@ -27,53 +27,47 @@ export class AuthService {
         })
       );
   }
-
-  // 🔹 CERRAR SESIÓN
   logout(): void {
-    localStorage.removeItem('user');
-    localStorage.removeItem('rol');
-    localStorage.removeItem('idUsuario');
-    localStorage.removeItem('token');
+    if (this.isBrowser) {
+      localStorage.removeItem('user');
+      localStorage.removeItem('rol');
+      localStorage.removeItem('idUsuario');
+      localStorage.removeItem('token');
+    }
     this.userSubject.next(null);
   }
-
-  // 🔹 GUARDAR SESIÓN
   private guardarSesion(userData: any): void {
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('rol', userData.nombreRol);
-    localStorage.setItem('idUsuario', userData.idUsuario.toString());
-    if (userData.tokenSesion) {
-      localStorage.setItem('token', userData.tokenSesion);
+    if (this.isBrowser) {
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('rol', userData.nombreRol);
+      localStorage.setItem('idUsuario', userData.idUsuario.toString());
+      if (userData.tokenSesion) {
+        localStorage.setItem('token', userData.tokenSesion);
+      }
     }
     this.userSubject.next(userData);
   }
-
-  // 🔹 CARGAR SESIÓN GUARDADA
   private cargarSesion(): void {
-    const user = localStorage.getItem('user');
-    if (user) {
-      this.userSubject.next(JSON.parse(user));
+    if (this.isBrowser) {
+      const user = localStorage.getItem('user');
+      if (user) {
+        this.userSubject.next(JSON.parse(user));
+      }
     }
   }
-
-  // 🔹 OBTENER ROL DEL USUARIO
   getRol(): string | null {
-    return localStorage.getItem('rol');
+    return this.isBrowser ? localStorage.getItem('rol') : null;
   }
-
-  // 🔹 OBTENER ID DEL USUARIO
   getIdUsuario(): number | null {
+    if (!this.isBrowser) return null;
     const id = localStorage.getItem('idUsuario');
     return id ? parseInt(id) : null;
   }
-
-  // 🔹 OBTENER TOKEN
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.isBrowser ? localStorage.getItem('token') : null;
   }
-
-  // 🔹 OBTENER DATOS COMPLETOS DEL USUARIO
   getUser(): any {
+    if (!this.isBrowser) return null;
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
@@ -87,26 +81,19 @@ export class AuthService {
     }
     return '';
   }
-
-  // 🔹 VERIFICAR SI ESTÁ AUTENTICADO
   isAuthenticated(): boolean {
+    if (!this.isBrowser) return false;
     return !!localStorage.getItem('user') && !!localStorage.getItem('rol');
   }
-
-  // 🔹 VERIFICAR SI TIENE UN ROL ESPECÍFICO
   hasRole(role: string): boolean {
     const userRol = this.getRol();
     return userRol?.toLowerCase() === role.toLowerCase();
   }
-
-  // 🔹 VERIFICAR SI TIENE ALGUNO DE LOS ROLES
   hasAnyRole(roles: string[]): boolean {
     const userRol = this.getRol();
     if (!userRol) return false;
     return roles.some(rol => rol.toLowerCase() === userRol.toLowerCase());
   }
-
-  // 🔹 OBTENER MENÚ SEGÚN ROL
   getMenuItems(): any[] {
     const rol = this.getRol()?.toLowerCase();
     

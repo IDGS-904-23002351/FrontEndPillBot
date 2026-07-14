@@ -16,15 +16,10 @@ import { ExpedienteClinicoComponent } from './expedienteClinico/expedienteClinic
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
-  
-  // Rutas protegidas con autenticación
-  {
-    path: 'inicio',
-    component: Inicio,
-    canActivate: [AuthGuard]
-  },
-  
-  // 🔹 RUTAS DE ADMINISTRADOR
+  { path: 'inicio', component: Inicio, canActivate: [AuthGuard] },
+  { path: 'recetas', component: RecetaComponent, canActivate: [AuthGuard] },
+  { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent, canActivate: [AuthGuard] },
+
   {
     path: 'admin',
     component: AdminLayoutLayout,
@@ -37,18 +32,14 @@ export const routes: Routes = [
       { path: 'carrito', component: Carrito },
       { path: 'compras', component: Compras },
       { path: 'productos', component: Roles },
-      { path: 'medicamentos', component: MedicamentosComponent }, // Actualizado con su componente real
+      { path: 'medicamentos', component: MedicamentosComponent },
       { path: 'clientes', component: Roles },
       { path: 'empleados', component: Roles },
       { path: 'usuarios', component: Roles },
       { path: 'ventas', component: Roles },
-      { path: 'recetas', component: RecetaComponent },
-      { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent },
-      { path: 'expediente-clinico', component: ExpedienteClinicoComponent } // Añadido a admin
+      { path: 'expediente-clinico', component: ExpedienteClinicoComponent }
     ]
   },
-
-  // 🔹 RUTAS DE CLIENTE
   {
     path: 'cliente',
     component: ClienteLayout,
@@ -58,15 +49,10 @@ export const routes: Routes = [
       { path: '', redirectTo: 'carrito', pathMatch: 'full' },
       { path: 'carrito', component: Carrito },
       { path: 'compras', component: Compras },
-      { path: 'recetas', component: RecetaComponent },
-      { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent },
-      { path: 'medicamentos', component: MedicamentosComponent }, // Añadido a cliente
-      { path: 'expediente-clinico', component: ExpedienteClinicoComponent }, // Añadido a cliente
-      { path: 'inicio', component: Inicio }
+      { path: 'medicamentos', component: MedicamentosComponent },
+      { path: 'expediente-clinico', component: ExpedienteClinicoComponent }
     ]
   },
-
-  // 🔹 RUTAS DE MÉDICO
   {
     path: 'medico',
     component: AdminLayoutLayout,
@@ -75,10 +61,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Inicio },
-      { path: 'recetas', component: RecetaComponent },
-      { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent },
-      { path: 'medicamentos', component: MedicamentosComponent }, // Añadido a médico
-      { path: 'expediente-clinico', component: ExpedienteClinicoComponent }, // Añadido a médico
+      { path: 'medicamentos', component: MedicamentosComponent },
+      { path: 'expediente-clinico', component: ExpedienteClinicoComponent },
       { path: 'pacientes', component: Roles }
     ]
   },

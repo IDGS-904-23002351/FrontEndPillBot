@@ -1,22 +1,24 @@
 // shared/menu/menu.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router'; // 🔹 Inyectamos Router aquí
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule],  // ← Importa esto
+  imports: [CommonModule, RouterModule],
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styles: [] 
 })
 export class MenuComponent implements OnInit {
   menuItems: any[] = [];
   userName: string = '';
   userRol: string = '';
-
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.userName = this.authService.getUserName();
@@ -26,6 +28,6 @@ export class MenuComponent implements OnInit {
 
   logout() {
     this.authService.logout();
-    // Navegar al login (debes inyectar Router)
+    this.router.navigate(['/login']);
   }
 }
