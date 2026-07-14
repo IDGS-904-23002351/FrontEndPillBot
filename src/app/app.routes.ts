@@ -8,13 +8,21 @@ import { AdminLayoutLayout } from './shared/admin-layout/admin-layout.layout';
 import { ClienteLayout } from './shared/cliente-layout/cliente-layout';
 import { Carrito } from './cliente/carrito/carrito';
 import { Compras } from './cliente/compras/compras';
+import { MedicamentosComponent } from './medicamentos/medicamentos';
+import { ExpedienteClinicoComponent } from './expedienteClinico/expedienteClinico';
+
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'inicio', component: Inicio },
+  
   { path: 'recetas', component: RecetaComponent },
   { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent },
+  { path: 'medicamentos', component: MedicamentosComponent },
+  { path: 'expediente-clinico', component: ExpedienteClinicoComponent },
+
 
   {
     path: 'admin',

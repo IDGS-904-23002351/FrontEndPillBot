@@ -1,0 +1,157 @@
+<div class="expediente-page">
+  <div class="expediente-card">
+
+    <h2 class="expediente-title">Expediente Clínico </h2>
+
+    <div class="expediente-toolbar">
+      <input
+        type="text"
+        class="expediente-search"
+        placeholder="Buscar cliente por nombre o correo..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+        name="busqueda"
+      />
+    </div>
+
+    <div class="expediente-tabla-wrapper">
+      <table class="expediente-tabla">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Correo</th>
+            <th>Tipo de Sangre</th>
+            <th>Alergias</th>
+            <th>Contacto Emergencia</th>
+            <th>Tel. Emergencia</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="cargando()">
+            <td colspan="7" class="estado-mensaje">Cargando clientes...</td>
+          </tr>
+          <tr *ngIf="!cargando() && errorCarga()">
+            <td colspan="7" class="estado-mensaje estado-error">{{ errorCarga() }}</td>
+          </tr>
+          <tr *ngIf="!cargando() && !errorCarga() && clientesFiltrados().length === 0">
+            <td colspan="7" class="estado-mensaje">No se encontraron clientes.</td>
+          </tr>
+
+          <tr *ngFor="let c of clientesFiltrados()">
+            <td>{{ c.nombreCompleto }}</td>
+            <td>{{ c.correo }}</td>
+            <td>{{ c.tipoSangre || '—' }}</td>
+            <td class="celda-padecimiento">{{ c.alergias || '—' }}</td>
+            <td>{{ c.contactoEmergencia || '—' }}</td>
+            <td>{{ c.telefonoEmergencia || '—' }}</td>
+            <td class="celda-acciones">
+              <button type="button" class="icono-accion icono-ver" title="Ver expediente" (click)="abrirVer(c)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button type="button" class="icono-accion icono-editar" title="Editar expediente" (click)="abrirEditar(c)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: VER EXPEDIENTE ===================== -->
+<div class="modal-overlay" *ngIf="modal() === 'ver' && clienteSeleccionado() as c">
+  <div class="modal-caja">
+    <div class="modal-encabezado">
+      <h3>Expediente de {{ c.nombreCompleto }}</h3>
+      <button type="button" class="modal-cerrar" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <div class="modal-cuerpo">
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Correo</span>
+        <span class="detalle-valor">{{ c.correo }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Tipo de sangre</span>
+        <span class="detalle-valor">{{ c.tipoSangre || '—' }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Alergias</span>
+        <span class="detalle-valor">{{ c.alergias || '—' }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Contacto de emergencia</span>
+        <span class="detalle-valor">{{ c.contactoEmergencia || '—' }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Teléfono de emergencia</span>
+        <span class="detalle-valor">{{ c.telefonoEmergencia || '—' }}</span>
+      </div>
+    </div>
+
+    <div class="modal-pie">
+      <button type="button" class="btn-secundario" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: EDITAR EXPEDIENTE ===================== -->
+<div class="modal-overlay" *ngIf="modal() === 'editar'">
+  <div class="modal-caja">
+    <div class="modal-encabezado">
+      <h3>Editar expediente clínico</h3>
+      <button type="button" class="modal-cerrar" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <form class="modal-cuerpo formulario" (ngSubmit)="guardarExpediente()">
+
+      <div class="campo">
+        <label>Cliente</label>
+        <input type="text" [value]="clienteForm.nombreCompleto" disabled />
+      </div>
+
+      <div class="campo">
+        <label for="tipoSangre">Tipo de sangre <span class="obligatorio">*</span></label>
+        <select id="tipoSangre" name="tipoSangre" [(ngModel)]="clienteForm.tipoSangre" required>
+          <option [ngValue]="undefined" disabled>Selecciona un tipo</option>
+          <option *ngFor="let t of tiposSangre" [ngValue]="t">{{ t }}</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="alergias">Alergias</label>
+        <textarea id="alergias" name="alergias" rows="3"
+                  [(ngModel)]="clienteForm.alergias" placeholder="Ej. Penicilina, mariscos..."></textarea>
+      </div>
+
+      <div class="campo">
+        <label for="contactoEmergencia">Contacto de emergencia</label>
+        <input id="contactoEmergencia" name="contactoEmergencia" type="text" maxlength="150"
+               [(ngModel)]="clienteForm.contactoEmergencia" placeholder="Nombre del contacto" />
+      </div>
+
+      <div class="campo">
+        <label for="telefonoEmergencia">Teléfono de emergencia</label>
+        <input id="telefonoEmergencia" name="telefonoEmergencia" type="tel" maxlength="20"
+               [(ngModel)]="clienteForm.telefonoEmergencia" placeholder="10 dígitos" />
+      </div>
+
+      <p class="mensaje-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>
+
+      <div class="modal-pie">
+        <button type="button" class="btn-secundario" (click)="cerrarModal()" [disabled]="guardando()">Cancelar</button>
+        <button type="submit" class="btn-primario" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
