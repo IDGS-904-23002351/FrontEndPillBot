@@ -7,13 +7,13 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,  // Asegúrate de que sea standalone
-  imports: [CommonModule, FormsModule],  // ← Importa esto
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class Login {
-  usuario = {  // ← Cambiar de correo/contrasena a usuario
+  usuario = {
     correo: '',
     contrasena: ''
   };
@@ -25,7 +25,7 @@ export class Login {
     private router: Router
   ) {}
 
-  onLogin() {  // ← Cambiar de onSubmit a onLogin
+  onLogin() {
     if (!this.usuario.correo || !this.usuario.contrasena) {
       this.error = 'Por favor complete todos los campos';
       return;
@@ -34,28 +34,17 @@ export class Login {
     this.loading = true;
     this.error = '';
 
-<<<<<<< HEAD
-    this.authService.login({ 
-      correo: this.usuario.correo, 
-      contrasena: this.usuario.contrasena 
-    }).subscribe({
-     next: (response: any) => {
-  this.loading = false;
-  this.redirigirPorRol(response.data.nombreRol);
-},
-=======
     this.authService.login({
-  correo: this.usuario.correo,
-  contrasena: this.usuario.contrasena,
-  dispositivo: 'Navegador',
-  ipOrigen: '127.0.0.1',
-  detallesNavegador: 'Angular Web'
-}).subscribe({
+      correo: this.usuario.correo,
+      contrasena: this.usuario.contrasena,
+      dispositivo: 'Navegador',
+      ipOrigen: '127.0.0.1',
+      detallesNavegador: 'Angular Web'
+    }).subscribe({
       next: (response: any) => {
         this.loading = false;
         this.redirigirPorRol(response.nombreRol);
       },
->>>>>>> 60fd19d (Modulo de ventas corregido (inventario, dashboard, ventas))
       error: (err) => {
         this.loading = false;
         this.error = err.error?.message || 'Credenciales incorrectas';
@@ -64,14 +53,14 @@ export class Login {
     });
   }
 
-private redirigirPorRol(rol: string) {
-  const rutasPorRol: { [key: string]: string } = {
-    'administrador': '/admin/dashboard',
-    'medico': '/medico/expediente-clinico',   // ← antes: '/medico/dashboard'
-    'cliente': '/cliente/carrito'
-  };
+  private redirigirPorRol(rol: string) {
+    const rutasPorRol: { [key: string]: string } = {
+      'administrador': '/admin/dashboard',
+      'medico': '/medico/expediente-clinico',
+      'cliente': '/cliente/carrito'
+    };
 
-  const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
-  this.router.navigate([ruta]);
-}
+    const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
+    this.router.navigate([ruta]);
+  }
 }
