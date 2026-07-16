@@ -2,39 +2,74 @@
   width: 100%;
 }
 
-.barra-superior {
+.encabezado-compras {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.titulo {
-  width: 230px;
-  padding: 13px;
+  .encabezado-compras h1 {
+    margin: 0;
+    color: #080d66;
+    font-size: 28px;
+  }
+
+  .encabezado-compras p {
+    margin: 7px 0 0;
+    color: #666;
+  }
+
+.btn-recargar {
+  padding: 11px 17px;
+  border: none;
   border-radius: 6px;
   background-color: #356799;
   color: white;
-  text-align: center;
-  font-weight: bold;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.mensaje-exito {
-  margin-bottom: 15px;
+  .btn-recargar:hover:not(:disabled) {
+    background-color: #28547e;
+  }
+
+  .btn-recargar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+.mensaje {
+  margin-bottom: 16px;
   padding: 12px 15px;
-  color: #176b46;
-  background-color: #dff4e9;
-  border-radius: 5px;
+  border-radius: 6px;
+}
+
+  .mensaje.error {
+    color: #9f2d25;
+    background-color: #f8dddd;
+  }
+
+.estado-carga {
+  padding: 30px;
+  background-color: white;
+  border-radius: 7px;
+  color: #356799;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .tabla-container {
   overflow-x: auto;
   background-color: white;
-  border-radius: 6px;
+  border-radius: 7px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 table {
   width: 100%;
+  min-width: 1100px;
   border-collapse: collapse;
 }
 
@@ -54,37 +89,72 @@ tbody tr {
   border-bottom: 1px solid #e0e0e0;
 }
 
+  tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background-color: #f7f8fb;
+  }
+
+.folio {
+  color: #080d66;
+  font-weight: 700;
+}
+
 .total-venta {
   color: #080d66;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .estado {
   display: inline-block;
+  min-width: 90px;
   padding: 6px 10px;
-  border-radius: 12px;
+  border-radius: 14px;
+  text-align: center;
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.pagado {
+.estado-pagado,
+.estado-entregado {
   color: #176b46;
   background-color: #dff4e9;
 }
 
-.pendiente {
+.estado-pendiente {
   color: #8a6000;
   background-color: #fff0c4;
 }
 
-.sin-compras {
-  padding: 60px 25px;
-  background-color: white;
-  border-radius: 6px;
+.estado-preparando {
+  color: #1d5791;
+  background-color: #dbeafe;
+}
+
+.estado-cancelado {
+  color: #9f2d25;
+  background-color: #f8dddd;
+}
+
+.tabla-vacia {
+  padding: 35px;
+  color: #777;
   text-align: center;
 }
 
+.sin-compras {
+  margin-top: 20px;
+  padding: 40px 25px;
+  background-color: white;
+  border-radius: 7px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
   .sin-compras h2 {
+    margin-top: 0;
     color: #080d66;
   }
 
@@ -94,10 +164,22 @@ tbody tr {
 
   .sin-compras a {
     display: inline-block;
-    margin-top: 12px;
+    margin-top: 10px;
     padding: 10px 18px;
-    color: white;
+    border-radius: 6px;
     background-color: #356799;
-    border-radius: 5px;
+    color: white;
     text-decoration: none;
+    font-weight: 600;
   }
+
+@media (max-width: 800px) {
+  .encabezado-compras {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .btn-recargar {
+    width: 100%;
+  }
+}

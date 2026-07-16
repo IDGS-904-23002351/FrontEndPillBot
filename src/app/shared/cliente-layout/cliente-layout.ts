@@ -1,17 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import {
   RouterLink,
   RouterLinkActive,
   RouterOutlet
 } from '@angular/router';
 
-interface UsuarioSesion {
-  idUsuario?: number;
-  nombre?: string;
-  nombreCompleto?: string;
-  rol?: string;
-  idRol?: number;
-}
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-cliente-layout',
@@ -26,28 +25,15 @@ interface UsuarioSesion {
 })
 export class ClienteLayout implements OnInit {
 
+  private authService = inject(AuthService);
+
   nombreUsuario = 'Usuario Cliente';
 
   ngOnInit(): void {
-    const usuarioGuardado = sessionStorage.getItem('usuario');
+    const nombre = this.authService.getUserName();
 
-    if (!usuarioGuardado) {
-      return;
-    }
-
-    try {
-      const usuario: UsuarioSesion = JSON.parse(usuarioGuardado);
-
-      this.nombreUsuario =
-        usuario.nombreCompleto ||
-        usuario.nombre ||
-        'Usuario Cliente';
-
-    } catch (error) {
-      console.error(
-        'No se pudo leer la información del usuario.',
-        error
-      );
+    if (nombre.trim()) {
+      this.nombreUsuario = nombre;
     }
   }
 }

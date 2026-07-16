@@ -68,7 +68,7 @@ private redirigirPorRol(rol: string) {
   const rutasPorRol: { [key: string]: string } = {
     'administrador': '/admin/dashboard',
     'medico': '/medico/expediente-clinico',   // ← antes: '/medico/dashboard'
-    'paciente': '/cliente/carrito'
+    'cliente': '/cliente/carrito'
   };
 
   const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';

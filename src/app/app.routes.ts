@@ -64,7 +64,7 @@ export const routes: Routes = [
     path: 'cliente',
     component: ClienteLayout,
     canActivate: [AuthGuard, RolGuard],
-    data: { roles: ['paciente'] },
+    data: { roles: ['cliente'] },
     children: [
       { path: '', redirectTo: 'carrito', pathMatch: 'full' },
       { path: 'carrito', component: Carrito },

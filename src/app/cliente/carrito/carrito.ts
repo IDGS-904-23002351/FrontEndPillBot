@@ -11,6 +11,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
+
 export interface ProductoDisponible {
   idInventarioProd: number;
   idProducto: number;
@@ -41,20 +44,6 @@ export interface RespuestaVenta {
   id_venta: number;
 }
 
-interface UsuarioSesion {
-  idUsuario?: number;
-  id_usuario?: number;
-
-  nombre?: string;
-  nombreCompleto?: string;
-  nombre_completo?: string;
-
-  idRol?: number;
-  id_rol?: number;
-
-  rol?: string;
-}
-
 @Component({
   selector: 'app-carrito',
   standalone: true,
@@ -69,20 +58,17 @@ export class Carrito implements OnInit {
 
   private http = inject(HttpClient);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
-  
   private readonly apiProductos =
-    'https://localhost:7046/api/admin/inventario-productos';
+    `${environment.apiUrl}/api/admin/inventario-productos`;
 
   private readonly apiCarrito =
-    'https://localhost:7046/api/carrito';
+    `${environment.apiUrl}/api/carrito`;
 
   private readonly apiVentas =
-    'https://localhost:7046/api/ventas';
+    `${environment.apiUrl}/api/ventas`;
 
-  /*
-   * Se obtendrá del usuario que haya iniciado sesión.
-   */
   idUsuario = signal<number>(0);
 
   productos = signal<ProductoDisponible[]>([]);
@@ -93,138 +79,81 @@ export class Carrito implements OnInit {
   cargandoProductos = signal(false);
   cargandoCarrito = signal(false);
   procesandoVenta = signal(false);
+  eliminandoDetalle = signal<number | null>(null);
 
   mensaje = signal('');
   errorCarga = signal('');
 
   productosFiltrados = computed(() => {
-    const termino = this.busqueda()
-      .trim()
-      .toLowerCase();
+    const termino = this.busqueda().trim().toLowerCase();
 
-    const productosDisponibles =
-      this.productos().filter(producto =>
-        producto.activo &&
-        producto.stock > 0
-      );
+    const disponibles = this.productos().filter(producto =>
+      producto.activo && producto.stock > 0
+    );
 
     if (!termino) {
-      return productosDisponibles;
+      return disponibles;
     }
 
-    return productosDisponibles.filter(producto =>
-      producto.nombre
-        .toLowerCase()
-        .includes(termino) ||
-
-      producto.sku
-        .toLowerCase()
-        .includes(termino) ||
-
-      (producto.descripcion ?? '')
-        .toLowerCase()
-        .includes(termino)
+    return disponibles.filter(producto =>
+      producto.nombre.toLowerCase().includes(termino) ||
+      producto.sku.toLowerCase().includes(termino) ||
+      (producto.descripcion ?? '').toLowerCase().includes(termino)
     );
   });
 
   cantidadTotal = computed(() =>
     this.carrito().reduce(
-      (total, articulo) =>
-        total + articulo.cantidad,
+      (total, articulo) => total + articulo.cantidad,
       0
     )
   );
 
   totalCarrito = computed(() =>
     this.carrito().reduce(
-      (total, articulo) =>
-        total + articulo.subtotal,
+      (total, articulo) => total + articulo.subtotal,
       0
     )
+  );
+
+  ivaCarrito = computed(() =>
+    this.totalCarrito() * 0.16
+  );
+
+  totalFinal = computed(() =>
+    this.totalCarrito() + this.ivaCarrito()
   );
 
   ngOnInit(): void {
     this.obtenerUsuarioSesion();
 
-    /*
-     * Solo se consultan las APIs cuando existe
-     * un usuario válido en la sesión.
-     */
     if (this.idUsuario() > 0) {
       this.cargarProductos();
       this.cargarCarrito();
     }
   }
 
-  /*
-   * Recupera la información que el login guardará
-   * en sessionStorage.
-   */
   obtenerUsuarioSesion(): void {
-    const usuarioGuardado =
-      sessionStorage.getItem('usuario');
+    const idUsuario = this.authService.getIdUsuario();
+    const rol = this.authService.getRol()
+      ?.trim()
+      .toLowerCase();
 
-    if (!usuarioGuardado) {
+    if (!idUsuario) {
       this.errorCarga.set(
         'Debes iniciar sesión para utilizar el carrito.'
       );
-
       return;
     }
 
-    try {
-      const usuario: UsuarioSesion =
-        JSON.parse(usuarioGuardado);
-
-      const identificador =
-        usuario.idUsuario ??
-        usuario.id_usuario ??
-        0;
-
-      const idRol =
-        usuario.idRol ??
-        usuario.id_rol ??
-        0;
-
-      const nombreRol =
-        usuario.rol?.toLowerCase() ?? '';
-
-      if (!identificador) {
-        this.errorCarga.set(
-          'No se encontró el identificador del usuario que inició sesión.'
-        );
-
-        return;
-      }
-
-      /*
-       * El rol Cliente tiene id_rol = 3.
-       * También se acepta el texto "Cliente".
-       */
-      const esCliente =
-        idRol === 3 ||
-        nombreRol === 'cliente';
-
-      if (!esCliente) {
-        this.errorCarga.set(
-          'Acceso denegado. Solo los clientes pueden utilizar el carrito.'
-        );
-
-        return;
-      }
-
-      this.idUsuario.set(identificador);
-
-    } catch (error) {
-      console.error(
-        'Error al leer la sesión del usuario:',
-        error
-      );
-
+    if (rol !== 'cliente') {
       this.errorCarga.set(
-        'No se pudo leer la información de la sesión.'
+        'Acceso denegado. Solo los clientes pueden utilizar el carrito.'
       );
+      return;
     }
+
+    this.idUsuario.set(idUsuario);
   }
 
   cargarProductos(): void {
@@ -232,9 +161,7 @@ export class Carrito implements OnInit {
     this.errorCarga.set('');
 
     this.http
-      .get<ProductoDisponible[]>(
-        this.apiProductos
-      )
+      .get<ProductoDisponible[]>(this.apiProductos)
       .subscribe({
         next: data => {
           this.productos.set(data ?? []);
@@ -242,28 +169,23 @@ export class Carrito implements OnInit {
         },
         error: error => {
           console.error(
-            'Error al consultar productos:',
+            'Error al consultar pastilleros:',
             error
           );
 
           this.productos.set([]);
+          this.cargandoProductos.set(false);
 
           this.errorCarga.set(
             error?.error?.mensaje ??
             'No se pudieron cargar los pastilleros disponibles.'
           );
-
-          this.cargandoProductos.set(false);
         }
       });
   }
 
   cargarCarrito(): void {
     if (this.idUsuario() <= 0) {
-      this.errorCarga.set(
-        'No existe un usuario válido para consultar el carrito.'
-      );
-
       return;
     }
 
@@ -281,25 +203,23 @@ export class Carrito implements OnInit {
         },
         error: error => {
           console.error(
-            'Error al consultar carrito:',
+            'Error al consultar el carrito:',
             error
           );
 
-          /*
-           * Si todavía no existe carrito, se muestra vacío.
-           */
           if (error.status === 404) {
             this.carrito.set([]);
             this.cargandoCarrito.set(false);
             return;
           }
 
+          this.carrito.set([]);
+          this.cargandoCarrito.set(false);
+
           this.errorCarga.set(
             error?.error?.mensaje ??
             'No se pudo consultar el carrito.'
           );
-
-          this.cargandoCarrito.set(false);
         }
       });
   }
@@ -316,17 +236,15 @@ export class Carrito implements OnInit {
 
     if (this.idUsuario() <= 0) {
       this.errorCarga.set(
-        'Debes iniciar sesión para agregar productos.'
+        'Debes iniciar sesión para agregar pastilleros.'
       );
-
       return;
     }
 
-    if (!cantidad || cantidad <= 0) {
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
       this.errorCarga.set(
         'Ingresa una cantidad válida.'
       );
-
       return;
     }
 
@@ -334,20 +252,14 @@ export class Carrito implements OnInit {
       this.errorCarga.set(
         `Solo existen ${producto.stock} unidades disponibles.`
       );
-
       return;
     }
 
-    /*
-     * Solo se venden pastilleros.
-     * Por eso idProducto lleva valor
-     * e idMedicamento siempre va en null.
-     */
     const datos = {
       idUsuario: this.idUsuario(),
       idProducto: producto.idProducto,
       idMedicamento: null,
-      cantidad: cantidad,
+      cantidad,
       precioUnitario: producto.precio
     };
 
@@ -359,13 +271,10 @@ export class Carrito implements OnInit {
       .subscribe({
         next: respuesta => {
           this.mensaje.set(
-            respuesta.mensaje
+            respuesta.mensaje ??
+            'Pastillero agregado correctamente.'
           );
 
-          /*
-           * Después de agregar, vuelve a consultar
-           * el carrito para mostrar el registro real.
-           */
           this.cargarCarrito();
         },
         error: error => {
@@ -382,6 +291,53 @@ export class Carrito implements OnInit {
       });
   }
 
+  eliminarDelCarrito(articulo: CarritoDetalle): void {
+    this.mensaje.set('');
+    this.errorCarga.set('');
+
+    const confirmar = window.confirm(
+      `¿Deseas eliminar "${articulo.nombreArticulo}" del carrito?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.eliminandoDetalle.set(
+      articulo.idDetalleCarrito
+    );
+
+    this.http
+      .delete<RespuestaMensaje>(
+        `${this.apiCarrito}/eliminar/${articulo.idDetalleCarrito}`
+      )
+      .subscribe({
+        next: respuesta => {
+          this.eliminandoDetalle.set(null);
+
+          this.mensaje.set(
+            respuesta.mensaje ??
+            'Artículo eliminado del carrito correctamente.'
+          );
+
+          this.cargarCarrito();
+        },
+        error: error => {
+          console.error(
+            'Error al eliminar el artículo del carrito:',
+            error
+          );
+
+          this.eliminandoDetalle.set(null);
+
+          this.errorCarga.set(
+            error?.error?.mensaje ??
+            'No se pudo eliminar el artículo del carrito.'
+          );
+        }
+      });
+  }
+
   confirmarCompra(): void {
     this.mensaje.set('');
     this.errorCarga.set('');
@@ -390,7 +346,6 @@ export class Carrito implements OnInit {
       this.errorCarga.set(
         'Debes iniciar sesión para procesar la compra.'
       );
-
       return;
     }
 
@@ -398,7 +353,6 @@ export class Carrito implements OnInit {
       this.errorCarga.set(
         'El carrito está vacío.'
       );
-
       return;
     }
 
@@ -410,13 +364,6 @@ export class Carrito implements OnInit {
       estadoEnvio: 'Pendiente'
     };
 
-    /*
-     * Se guarda el total antes de que el backend
-     * cambie el estado del carrito.
-     */
-    const totalCompra =
-      this.totalCarrito();
-
     this.http
       .post<RespuestaVenta>(
         `${this.apiVentas}/procesar`,
@@ -426,19 +373,9 @@ export class Carrito implements OnInit {
         next: respuesta => {
           this.procesandoVenta.set(false);
 
-          /*
-           * Guarda temporalmente la venta procesada
-           * para mostrarla en la pantalla Compras.
-           */
-          sessionStorage.setItem(
-            'ultimaCompra',
-            JSON.stringify({
-              idVenta: respuesta.id_venta,
-              total: totalCompra,
-              estadoPago: 'Pagado',
-              estadoEnvio: 'Pendiente',
-              mensaje: respuesta.mensaje
-            })
+          this.mensaje.set(
+            respuesta.mensaje ??
+            'Venta procesada correctamente.'
           );
 
           this.router.navigate([
@@ -447,7 +384,7 @@ export class Carrito implements OnInit {
         },
         error: error => {
           console.error(
-            'Error al procesar venta:',
+            'Error al procesar la compra:',
             error
           );
 

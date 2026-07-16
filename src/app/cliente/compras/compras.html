@@ -1,18 +1,45 @@
 <section class="compras-page">
 
-  <div class="barra-superior">
+  <div class="encabezado-compras">
 
-    <div class="titulo">
-      Compras del cliente
+    <div>
+      <h1>Mis compras</h1>
+
+      <p>
+        Consulta los pastilleros adquiridos y el estado
+        actual de cada compra.
+      </p>
     </div>
 
+    <button type="button"
+            class="btn-recargar"
+            [disabled]="cargando()"
+            (click)="cargarCompras()">
+
+      {{
+        cargando()
+          ? 'Actualizando...'
+          : 'Actualizar historial'
+      }}
+    </button>
+
   </div>
 
-  @if (compra()) {
+  @if (errorCarga()) {
 
-  <div class="mensaje-exito">
-    {{ compra()?.mensaje }}
+  <div class="mensaje error">
+    {{ errorCarga() }}
   </div>
+
+  }
+
+  @if (cargando()) {
+
+  <div class="estado-carga">
+    Consultando el historial de compras...
+  </div>
+
+  } @else {
 
   <div class="tabla-container">
 
@@ -20,9 +47,13 @@
 
       <thead>
         <tr>
-          <th>Folio de venta</th>
-          <th>Producto</th>
-          <th>Total</th>
+          <th>Folio</th>
+          <th>Fecha</th>
+          <th>Pastillero</th>
+          <th>Cantidad</th>
+          <th>Precio unitario</th>
+          <th>Subtotal</th>
+          <th>Total de venta</th>
           <th>Estado de pago</th>
           <th>Estado de envío</th>
         </tr>
@@ -30,36 +61,96 @@
 
       <tbody>
 
+        @for (
+        compra of compras();
+        track
+        compra.idVenta +
+        '-' +
+        compra.nombreProducto
+        ) {
+
         <tr>
 
-          <td>
-            #{{ compra()?.idVenta }}
+          <td class="folio">
+            #{{ compra.idVenta }}
           </td>
 
           <td>
-            Pastillero PillBot
+            {{ formatearFecha(compra.fechaVenta) }}
           </td>
 
-          <td class="total-venta">
+          <td>
+            {{ compra.nombreProducto }}
+          </td>
+
+          <td>
+            {{ compra.cantidad }}
+          </td>
+
+          <td>
             {{
-                compra()?.total |
-                currency:'MXN':'symbol':'1.2-2'
+                  compra.precioUnitario |
+                  currency:'MXN':'symbol':'1.2-2'
             }}
           </td>
 
           <td>
-            <span class="estado pagado">
-              {{ compra()?.estadoPago }}
+            {{
+                  compra.subtotal |
+                  currency:'MXN':'symbol':'1.2-2'
+            }}
+          </td>
+
+          <td class="total-venta">
+            {{
+                  compra.totalVenta |
+                  currency:'MXN':'symbol':'1.2-2'
+            }}
+          </td>
+
+          <td>
+            <span class="estado"
+                  [ngClass]="
+                    claseEstadoPago(
+                      compra.estadoPago
+                    )
+                  ">
+
+              {{
+                    compra.estadoPago ||
+                    'Pendiente'
+              }}
             </span>
           </td>
 
           <td>
-            <span class="estado pendiente">
-              {{ compra()?.estadoEnvio }}
+            <span class="estado"
+                  [ngClass]="
+                    claseEstadoEnvio(
+                      compra.estadoEnvio
+                    )
+                  ">
+
+              {{
+                    compra.estadoEnvio ||
+                    'Pendiente'
+              }}
             </span>
           </td>
 
         </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="9"
+              class="tabla-vacia">
+
+            Todavía no tienes compras registradas.
+          </td>
+        </tr>
+
+        }
 
       </tbody>
 
@@ -67,14 +158,15 @@
 
   </div>
 
-  } @else {
+  @if (compras().length === 0) {
 
   <div class="sin-compras">
 
-    <h2>No hay una compra procesada</h2>
+    <h2>No hay compras registradas</h2>
 
     <p>
-      Agrega un pastillero al carrito y confirma la compra.
+      Agrega un pastillero al carrito y confirma
+      la compra para verlo en este historial.
     </p>
 
     <a routerLink="/cliente/carrito">
@@ -82,6 +174,8 @@
     </a>
 
   </div>
+
+  }
 
   }
 

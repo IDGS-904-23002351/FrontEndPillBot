@@ -155,6 +155,7 @@
           <th>Cantidad</th>
           <th>Precio unitario</th>
           <th>Subtotal</th>
+          <th>Acción</th>
         </tr>
       </thead>
 
@@ -189,12 +190,21 @@
             }}
           </td>
 
+          <td>
+            <button type="button"
+                    class="btn-eliminar"
+                    [disabled]="eliminandoDetalle() === articulo.idDetalleCarrito"
+                    (click)="eliminarDelCarrito(articulo)">
+              {{eliminandoDetalle() === articulo.idDetalleCarrito? 'Eliminando...': 'Eliminar'}}
+            </button>
+          </td>
+
         </tr>
 
         } @empty {
 
         <tr>
-          <td colspan="4"
+          <td colspan="5"
               class="tabla-vacia">
 
             El carrito está vacío.
@@ -227,10 +237,16 @@
         <span>Subtotal:</span>
 
         <strong>
-          {{
-                totalCarrito() |
-                currency:'MXN':'symbol':'1.2-2'
+          {{totalCarrito() |currency:'MXN':'symbol':'1.2-2'
           }}
+        </strong>
+      </div>
+
+      <div class="resumen-fila">
+        <span>IVA (16%):</span>
+
+        <strong>
+          {{ivaCarrito() |currency:'MXN':'symbol':'1.2-2'}}
         </strong>
       </div>
 
@@ -238,10 +254,7 @@
         <span>Total:</span>
 
         <strong>
-          {{
-                totalCarrito() |
-                currency:'MXN':'symbol':'1.2-2'
-          }}
+          {{totalFinal() |currency:'MXN':'symbol':'1.2-2'}}
         </strong>
       </div>
 

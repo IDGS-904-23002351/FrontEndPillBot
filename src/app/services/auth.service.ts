@@ -117,8 +117,8 @@ login(credentials: any): Observable<any> {
         { icon: 'medical_services', label: 'Recetas', route: '/medico/recetas' },
         { icon: 'groups', label: 'Pacientes', route: '/medico/pacientes' }
       ],
-      'paciente': [
-        { icon: 'home', label: 'Inicio', route: '/cliente/inicio' },
+      'cliente': [
+        { icon: 'home', label: 'Inicio', route: '/inicio' },
         { icon: 'shopping_cart', label: 'Carrito', route: '/cliente/carrito' },
         { icon: 'receipt', label: 'Mis Compras', route: '/cliente/compras' },
         { icon: 'medical_services', label: 'Mis Recetas', route: '/cliente/recetas' }
