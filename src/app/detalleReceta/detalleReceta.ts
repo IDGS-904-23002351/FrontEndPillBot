@@ -54,18 +54,12 @@ export class DetalleRecetaComponent implements OnInit {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private authService = inject(AuthService); // ← nuevo
-
-
-  // Ajusta esta base si tu backend corre en otro puerto/ruta
+  private authService = inject(AuthService);
   private readonly apiDetalleReceta = 'https://localhost:7046/api/detalleReceta';
   private readonly apiMedicamentos = 'https://localhost:7046/api/catalogo/medicamentos';
 
-  // id_receta con el que se llegó a esta pantalla (desde el ícono "+" de Recetas)
   idReceta = signal<number>(0);
   padecimientoReceta = signal<string>('');
-
-  // Datos "crudos" que vienen del backend, sin enriquecer todavía
   detalles = signal<DetalleRecetaRaw[]>([]);
   medicamentos = signal<Medicamento[]>([]);
   busqueda = signal('');
@@ -76,9 +70,6 @@ export class DetalleRecetaComponent implements OnInit {
   detalleForm: DetalleForm = {};
   guardando = signal(false);
   errorFormulario = signal('');
-
-  // Combina los detalles crudos con el padecimiento (de la receta actual)
-  // y el nombre comercial (buscado en la lista de medicamentos)
   detallesVista = computed<DetalleRecetaVista[]>(() =>
     this.detalles().map(d => ({
       ...d,
@@ -100,7 +91,6 @@ export class DetalleRecetaComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // idReceta llega por parámetro de ruta: /detalle-receta/:idReceta
     const idRecetaParam = Number(this.route.snapshot.paramMap.get('idReceta'));
     this.idReceta.set(idRecetaParam || 0);
 
@@ -120,8 +110,6 @@ export class DetalleRecetaComponent implements OnInit {
         this.cargando.set(false);
       },
       error: (err) => {
-        // El backend responde 404 cuando la receta aún no tiene detalles
-        // registrados; eso no es un error real, solo significa lista vacía.
         if (err.status === 404) {
           this.detalles.set([]);
           this.cargando.set(false);
@@ -157,9 +145,6 @@ export class DetalleRecetaComponent implements OnInit {
     if (rol === 'administrador') return '/admin';
     return '';
   }
-
-  // ---------- Modales ----------
-
   abrirCrear(): void {
     this.detalleForm = {
       idMedicamento: undefined,
@@ -191,17 +176,11 @@ export class DetalleRecetaComponent implements OnInit {
     this.modal.set('ninguno');
     this.errorFormulario.set('');
   }
-
-  // El backend guarda la dosis ya con la unidad concatenada (ej. "500 mg").
-  // Para poder editar solo el número, se extrae la parte numérica.
   private extraerNumeroDosis(dosis?: string | null): number | null {
     if (!dosis) return null;
     const coincidencia = dosis.match(/[\d.]+/);
     return coincidencia ? Number(coincidencia[0]) : null;
   }
-
-  // ---------- Guardar (crear / editar) ----------
-
   guardarDetalle(): void {
     const f = this.detalleForm;
 

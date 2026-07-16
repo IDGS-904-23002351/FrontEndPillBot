@@ -1,4 +1,3 @@
-// auth/login/login.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -43,7 +42,14 @@ export class Login {
     }).subscribe({
       next: (response: any) => {
         this.loading = false;
-        this.redirigirPorRol(response.nombreRol);
+        const rol = response?.data?.nombreRol;
+        
+        if (rol) {
+          this.redirigirPorRol(rol);
+        } else {
+          this.error = 'No se pudo determinar el rol del usuario';
+          this.router.navigate(['/inicio']);
+        }
       },
       error: (err) => {
         this.loading = false;

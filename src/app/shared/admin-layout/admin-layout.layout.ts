@@ -1,14 +1,13 @@
-// shared/admin-layout/admin-layout.layout.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, RouterOutlet } from '@angular/router'; 
 import { MenuComponent } from '../menu/menu.component';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, MenuComponent],  // ← Importa
+  imports: [CommonModule, RouterModule, RouterOutlet, MenuComponent], 
   templateUrl: './admin-layout.layout.html',
   styleUrls: ['./admin-layout.layout.css']
 })
@@ -28,6 +27,6 @@ export class AdminLayoutLayout implements OnInit {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']); 
   }
 }

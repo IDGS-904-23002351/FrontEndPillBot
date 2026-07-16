@@ -1,17 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RolGuard implements CanActivate {
+  private platformId = inject(PLATFORM_ID);
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return true; 
+    }
+
     const rolesPermitidos = route.data['roles'] as Array<string>;
     const rolUsuario = this.authService.getRol();
 
@@ -19,24 +26,20 @@ export class RolGuard implements CanActivate {
       this.router.navigate(['/login']);
       return false;
     }
-
-    // Verificar si el usuario tiene el rol permitido
     if (this.authService.hasAnyRole(rolesPermitidos)) {
       return true;
     }
-
-    // Redirigir según el rol que tiene
     this.redirigirPorRol(rolUsuario);
     return false;
   }
 
-private redirigirPorRol(rol: string): void {
-  const rutasPorRol: { [key: string]: string } = {
-    'administrador': '/admin/dashboard',
-    'medico': '/medico/expediente-clinico',   // ← igual aquí
-    'cliente': '/cliente/carrito'
-  };
-  const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
-  this.router.navigate([ruta]);
-}
+  private redirigirPorRol(rol: string): void {
+    const rutasPorRol: { [key: string]: string } = {
+      'administrador': '/admin/dashboard',
+      'medico': '/medico/expediente-clinico',
+      'cliente': '/cliente/carrito'
+    };
+    const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
+    this.router.navigate([ruta]);
+  }
 }
