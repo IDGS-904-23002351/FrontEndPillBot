@@ -1,10 +1,18 @@
-import { RenderMode, ServerRoute } from '@angular/ssr';
+import {
+  RenderMode,
+  ServerRoute
+} from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
-    // /detalle-receta/123 depende de un idReceta dinámico y de datos que solo
-    // existen en tiempo de ejecución (llamadas HTTP al backend). No se puede
-    // "adivinar" en build time, así que esta ruta NO debe prerenderizarse.
+    path: 'admin/**',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'cliente/**',
+    renderMode: RenderMode.Client
+  },
+  {
     path: 'detalle-receta/:idReceta',
     renderMode: RenderMode.Server
   },

@@ -34,6 +34,7 @@ export class Login {
     this.loading = true;
     this.error = '';
 
+<<<<<<< HEAD
     this.authService.login({ 
       correo: this.usuario.correo, 
       contrasena: this.usuario.contrasena 
@@ -42,6 +43,19 @@ export class Login {
   this.loading = false;
   this.redirigirPorRol(response.data.nombreRol);
 },
+=======
+    this.authService.login({
+  correo: this.usuario.correo,
+  contrasena: this.usuario.contrasena,
+  dispositivo: 'Navegador',
+  ipOrigen: '127.0.0.1',
+  detallesNavegador: 'Angular Web'
+}).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        this.redirigirPorRol(response.nombreRol);
+      },
+>>>>>>> 60fd19d (Modulo de ventas corregido (inventario, dashboard, ventas))
       error: (err) => {
         this.loading = false;
         this.error = err.error?.message || 'Credenciales incorrectas';

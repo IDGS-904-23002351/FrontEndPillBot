@@ -1,39 +1,154 @@
 <div class="dashboard-container">
+
   <aside class="sidebar">
+
     <div class="sidebar-header">
       <h2>Admin Panel</h2>
     </div>
+
     <hr class="divider">
+
     <nav class="sidebar-menu">
-      <a routerLink="/admin/inicio" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-home"></i> Inicio</a>
-      <a routerLink="/admin/carrito" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-cart"></i> Carrito</a>
-      <a routerLink="/admin/compras" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-bag"></i> Compras</a>
-      <a routerLink="/admin/productos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-box"></i> Inv. Productos</a>
-      <a routerLink="/admin/medicamentos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-pill"></i> Inv. Medicamentos</a>
-      <a routerLink="/admin/clientes" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-users"></i> Clientes</a>
-      <a routerLink="/admin/empleados" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-user-tie"></i> Empleados</a>
-      <a routerLink="/admin/usuarios" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-user-cog"></i> Usuarios</a>
-      <a routerLink="/admin/roles" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-shield"></i> Roles</a>
-      
-      <div class="menu-section-title">DASHBOARDS</div>
-      <a routerLink="/admin/ventas" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"><i class="icon-chart"></i> Ventas</a>
+
+      <a
+        routerLink="/admin/inicio"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Inicio
+      </a>
+
+      <a
+        routerLink="/admin/carrito"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Carrito
+      </a>
+
+      <a
+        routerLink="/admin/compras"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Compras
+      </a>
+
+      <a
+        routerLink="/admin/productos"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Inv. Productos
+      </a>
+
+      <a
+        routerLink="/admin/medicamentos"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Inv. Medicamentos
+      </a>
+
+      <a
+        routerLink="/admin/clientes"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Clientes
+      </a>
+
+      <a
+        routerLink="/admin/empleados"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Empleados
+      </a>
+
+      <a
+        routerLink="/admin/usuarios"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Usuarios
+      </a>
+
+      <a
+        routerLink="/admin/roles"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Roles
+      </a>
+
+      <div class="menu-section-title">
+        DASHBOARDS
+      </div>
+
+      <a
+        routerLink="/admin/dashboard-ventas"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Dashboard de Ventas
+      </a>
+
+      <a
+        routerLink="/admin/ventas"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }">
+
+        Ventas
+      </a>
+
     </nav>
+
   </aside>
 
   <div class="main-content">
+
     <header class="navbar">
+
       <div class="user-profile">
-        <span class="user-name">Usuario Administrador</span>
+
+        <span class="user-name">
+          Usuario Administrador
+        </span>
+
         <div class="user-avatar">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="24"
+            height="24">
+
+            <path
+              fill-rule="evenodd"
+              d="M7.5 6a4.5 4.5 0 119 0
+                 4.5 4.5 0 01-9 0z
+                 M3.751 20.105a8.25 8.25 0 0116.498 0
+                 .75.75 0 01-.437.695
+                 A18.683 18.683 0 0112 22.5
+                 c-2.786 0-5.433-.608-7.812-1.7
+                 a.75.75 0 01-.437-.695z"
+              clip-rule="evenodd">
+            </path>
+
           </svg>
+
         </div>
+
       </div>
+
     </header>
 
     <main class="content-body">
       <router-outlet></router-outlet>
     </main>
+
   </div>
+
 </div>

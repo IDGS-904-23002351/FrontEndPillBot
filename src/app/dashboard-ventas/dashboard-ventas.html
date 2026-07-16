@@ -1,0 +1,345 @@
+<section class="dashboard-ventas-page">
+
+  <div class="encabezado-modulo">
+
+    <div>
+      <h1>Dashboard de Ventas</h1>
+
+      <p>
+        Consulta los principales indicadores
+        relacionados con las ventas de productos.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-actualizar"
+      [disabled]="cargando()"
+      (click)="cargarDashboard()">
+
+      {{
+        cargando()
+          ? 'Actualizando...'
+          : 'Actualizar datos'
+      }}
+    </button>
+
+  </div>
+
+  @if (mensaje()) {
+    <div class="mensaje exito">
+      {{ mensaje() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="mensaje error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (cargando()) {
+
+    <div class="estado-carga">
+      Consultando estadísticas de ventas...
+    </div>
+
+  } @else {
+
+    <div class="indicadores-grid">
+
+      <article class="indicador-card">
+
+        <span class="indicador-titulo">
+          Total de ventas
+        </span>
+
+        <strong class="indicador-valor">
+          {{ estadisticas().totalVentas }}
+        </strong>
+
+        <small>
+          Operaciones registradas
+        </small>
+
+      </article>
+
+      <article class="indicador-card">
+
+        <span class="indicador-titulo">
+          Ingresos totales
+        </span>
+
+        <strong class="indicador-valor">
+          {{
+            estadisticas().totalIngresos |
+            currency:'MXN':'symbol':'1.2-2'
+          }}
+        </strong>
+
+        <small>
+          Importe acumulado
+        </small>
+
+      </article>
+
+      <article class="indicador-card">
+
+        <span class="indicador-titulo">
+          Productos vendidos
+        </span>
+
+        <strong class="indicador-valor">
+          {{ estadisticas().productosVendidos }}
+        </strong>
+
+        <small>
+          Unidades vendidas
+        </small>
+
+      </article>
+
+      <article class="indicador-card">
+
+        <span class="indicador-titulo">
+          Ticket promedio
+        </span>
+
+        <strong class="indicador-valor">
+          {{
+            estadisticas().ticketPromedio |
+            currency:'MXN':'symbol':'1.2-2'
+          }}
+        </strong>
+
+        <small>
+          Promedio por venta
+        </small>
+
+      </article>
+
+    </div>
+
+    <div class="contenido-grid">
+
+      <section class="panel grafica-panel">
+
+        <div class="panel-encabezado">
+
+          <div>
+            <h2>Ventas por fecha</h2>
+
+            <p>
+              Comparación de operaciones
+              registradas en la base de datos.
+            </p>
+          </div>
+
+        </div>
+
+        @if (ventasPorPeriodo().length > 0) {
+
+          <div class="grafica-barras">
+
+            @for (
+              item of ventasPorPeriodo();
+              track item.fecha
+            ) {
+
+              <div class="barra-fila">
+
+                <div class="barra-etiqueta">
+                  {{ item.etiqueta }}
+                </div>
+
+                <div class="barra-contenedor">
+
+                  <div
+                    class="barra-relleno"
+                    [style.width.%]="
+                      obtenerAnchoBarra(
+                        item.ventas
+                      )
+                    ">
+                  </div>
+
+                </div>
+
+                <div class="barra-valor">
+                  {{ item.ventas }}
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="sin-datos">
+            No hay ventas registradas para mostrar.
+          </div>
+
+        }
+
+      </section>
+
+      <section class="panel resumen-panel">
+
+        <div class="panel-encabezado">
+
+          <div>
+            <h2>Resumen general</h2>
+
+            <p>
+              Resultados consolidados
+              de todas las ventas.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="resumen-lista">
+
+          <div class="resumen-fila">
+
+            <span>
+              Promedio de productos por venta
+            </span>
+
+            <strong>
+              {{
+                promedioProductosPorVenta() |
+                number:'1.1-2'
+              }}
+            </strong>
+
+          </div>
+
+          <div class="resumen-fila">
+
+            <span>
+              Ingreso promedio
+            </span>
+
+            <strong>
+              {{
+                estadisticas().ticketPromedio |
+                currency:'MXN':'symbol':'1.2-2'
+              }}
+            </strong>
+
+          </div>
+
+          <div class="resumen-fila">
+
+            <span>
+              Ventas procesadas
+            </span>
+
+            <strong>
+              {{ estadisticas().totalVentas }}
+            </strong>
+
+          </div>
+
+          <div class="resumen-fila">
+
+            <span>
+              Unidades vendidas
+            </span>
+
+            <strong>
+              {{
+                estadisticas()
+                  .productosVendidos
+              }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <section class="panel tabla-panel">
+
+      <div class="panel-encabezado">
+
+        <div>
+          <h2>Detalle por periodo</h2>
+
+          <p>
+            Ventas e ingresos registrados
+            durante cada fecha.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="tabla-container">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Periodo</th>
+              <th>Número de ventas</th>
+              <th>Ingresos</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (
+              item of ventasPorPeriodo();
+              track item.fecha
+            ) {
+
+              <tr>
+
+                <td class="periodo">
+                  {{ item.etiqueta }}
+                </td>
+
+                <td>
+                  {{ item.ventas }}
+                </td>
+
+                <td class="ingreso">
+                  {{
+                    item.ingresos |
+                    currency:'MXN':'symbol':'1.2-2'
+                  }}
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td
+                  colspan="3"
+                  class="sin-datos-tabla">
+
+                  No hay información de ventas
+                  disponible.
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  }
+
+</section>

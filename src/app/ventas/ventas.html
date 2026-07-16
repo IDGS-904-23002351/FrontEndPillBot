@@ -1,0 +1,443 @@
+<section class="ventas-page">
+
+  <div class="encabezado-modulo">
+
+    <div>
+      <h1>Gestión de Ventas</h1>
+
+      <p>
+        Consulta las ventas registradas y actualiza
+        su estado.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-recargar"
+      (click)="cargarVentas()">
+
+      Actualizar
+    </button>
+
+  </div>
+
+  @if (mensaje()) {
+    <div class="mensaje exito">
+      {{ mensaje() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="mensaje error">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="tarjeta-ventas">
+
+    <div class="barra-herramientas">
+
+      <input
+        type="text"
+        class="buscador"
+        placeholder="Buscar por folio, cliente o estado..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="cambiarBusqueda($event)">
+
+      <div class="contador">
+        {{ ventasFiltradas().length }}
+        venta(s)
+      </div>
+
+    </div>
+
+    @if (cargando()) {
+
+      <div class="estado-carga">
+        Consultando ventas...
+      </div>
+
+    } @else {
+
+      <div class="tabla-container">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Folio</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Subtotal</th>
+              <th>IVA</th>
+              <th>Total</th>
+              <th>Pago</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (
+              venta of ventasFiltradas();
+              track venta.idVenta
+            ) {
+
+              <tr>
+
+                <td class="folio">
+                  #{{ venta.idVenta }}
+                </td>
+
+                <td>
+                  {{ venta.cliente }}
+                </td>
+
+                <td>
+                  {{
+                    venta.fechaVenta
+                      ? (venta.fechaVenta | date:'dd/MM/yyyy HH:mm')
+                      : 'Sin fecha'
+                  }}
+                </td>
+
+                <td>
+                  {{
+                    venta.subtotal |
+                    currency:'MXN':'symbol':'1.2-2'
+                  }}
+                </td>
+
+                <td>
+                  {{
+                    venta.iva |
+                    currency:'MXN':'symbol':'1.2-2'
+                  }}
+                </td>
+
+                <td class="total">
+                  {{
+                    venta.total |
+                    currency:'MXN':'symbol':'1.2-2'
+                  }}
+                </td>
+
+                <td>
+                  <span
+                    [class]="obtenerClasePago(
+                      venta.estadoPago
+                    )">
+
+                    {{ venta.estadoPago }}
+                  </span>
+                </td>
+
+                <td>
+                  <span
+                    [class]="obtenerClaseEnvio(
+                      venta.estadoEnvio
+                    )">
+
+                    {{ venta.estadoEnvio }}
+                  </span>
+                </td>
+
+                <td class="acciones">
+
+                  <button
+                    type="button"
+                    class="btn-accion ver"
+                    title="Ver detalle"
+                    (click)="consultarDetalle(venta)">
+
+                    Ver
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-accion editar"
+                    title="Actualizar estado"
+                    (click)="abrirEditarEstado(venta)">
+
+                    Estado
+                  </button>
+
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td
+                  colspan="9"
+                  class="tabla-vacia">
+
+                  No se encontraron ventas registradas.
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>
+
+@if (mostrarDetalle()) {
+
+  <div class="modal-fondo">
+
+    <div class="modal-contenido modal-grande">
+
+      <div class="modal-encabezado">
+
+        <div>
+          <h2>
+            Detalle de venta
+            #{{ ventaSeleccionada()?.idVenta }}
+          </h2>
+
+          <p>
+            Cliente:
+            {{ ventaSeleccionada()?.cliente }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-cerrar"
+          (click)="cerrarDetalle()">
+
+          ×
+        </button>
+
+      </div>
+
+      @if (cargandoDetalle()) {
+
+        <div class="estado-carga">
+          Consultando detalle...
+        </div>
+
+      } @else {
+
+        <div class="tabla-container">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Artículo</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (
+                detalle of detalleVenta();
+                track detalle.idDetalleVenta
+              ) {
+
+                <tr>
+
+                  <td>
+                    {{ detalle.articulo }}
+                  </td>
+
+                  <td>
+                    {{ detalle.cantidad }}
+                  </td>
+
+                  <td>
+                    {{
+                      detalle.precioUnitario |
+                      currency:'MXN':'symbol':'1.2-2'
+                    }}
+                  </td>
+
+                  <td class="total">
+                    {{
+                      detalle.subtotalDetalle |
+                      currency:'MXN':'symbol':'1.2-2'
+                    }}
+                  </td>
+
+                </tr>
+
+              } @empty {
+
+                <tr>
+                  <td
+                    colspan="4"
+                    class="tabla-vacia">
+
+                    La venta no tiene artículos.
+                  </td>
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <div class="resumen-detalle">
+
+          <div>
+            <span>Subtotal</span>
+
+            <strong>
+              {{
+                ventaSeleccionada()?.subtotal |
+                currency:'MXN':'symbol':'1.2-2'
+              }}
+            </strong>
+          </div>
+
+          <div>
+            <span>IVA</span>
+
+            <strong>
+              {{
+                ventaSeleccionada()?.iva |
+                currency:'MXN':'symbol':'1.2-2'
+              }}
+            </strong>
+          </div>
+
+          <div class="resumen-total">
+            <span>Total</span>
+
+            <strong>
+              {{
+                ventaSeleccionada()?.total |
+                currency:'MXN':'symbol':'1.2-2'
+              }}
+            </strong>
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+}
+
+@if (mostrarEditarEstado()) {
+
+  <div class="modal-fondo">
+
+    <div class="modal-contenido">
+
+      <div class="modal-encabezado">
+
+        <div>
+          <h2>
+            Actualizar venta
+            #{{ ventaSeleccionada()?.idVenta }}
+          </h2>
+
+          <p>
+            {{ ventaSeleccionada()?.cliente }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-cerrar"
+          (click)="cerrarEditarEstado()">
+
+          ×
+        </button>
+
+      </div>
+
+      <div class="formulario-estado">
+
+        <label>
+          Estado de pago
+        </label>
+
+        <select
+          [ngModel]="estadoPagoSeleccionado()"
+          (ngModelChange)="cambiarEstadoPago($event)">
+
+          @for (
+            estado of estadosPago;
+            track estado
+          ) {
+            <option [value]="estado">
+              {{ estado }}
+            </option>
+          }
+
+        </select>
+
+        <label>
+          Estado de la venta
+        </label>
+
+        <select
+          [ngModel]="estadoEnvioSeleccionado()"
+          (ngModelChange)="cambiarEstadoEnvio($event)">
+
+          @for (
+            estado of estadosEnvio;
+            track estado
+          ) {
+            <option [value]="estado">
+              {{ estado }}
+            </option>
+          }
+
+        </select>
+
+      </div>
+
+      <div class="modal-acciones">
+
+        <button
+          type="button"
+          class="btn-cancelar"
+          (click)="cerrarEditarEstado()">
+
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn-guardar"
+          [disabled]="actualizando()"
+          (click)="actualizarEstado()">
+
+          {{
+            actualizando()
+              ? 'Guardando...'
+              : 'Guardar cambios'
+          }}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}

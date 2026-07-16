@@ -17,14 +17,15 @@ export class AuthService {
     this.cargarSesion();
   }
 login(credentials: any): Observable<any> {
-  return this.http.post(`${this.apiUrl}/loginWeb`, credentials)
+  return this.http
+    .post(`${this.apiUrl}/login`, credentials)
     .pipe(
       tap((response: any) => {
         const userData = response?.data;
+
         if (userData && userData.nombreRol) {
           this.guardarSesion(userData);
         }
-        return response;
       })
     );
 }
