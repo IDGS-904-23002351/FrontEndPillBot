@@ -1,99 +1,210 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+
+export interface Rol {
+  idRol: number;
+  nombreRol: string;
+  descripcion: string;
+  activo?: boolean | null;
+}
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './roles.html',
-  styleUrl: './roles.css',
+  styleUrl: './roles.css'
 })
 export class Roles implements OnInit {
   private http = inject(HttpClient);
-  private url = `${environment.apiUrl}/api/rol/roles`;
-  
-  // Propiedades
-  roles: any[] = [];
-  mostrarFormulario = false;
-  nuevoRol = { nombreRol: '', descripcion: '' };
+  private readonly apiRolesBase = `${environment.apiUrl}/api/rol`;
+  private readonly urlObtenerTodos = `${this.apiRolesBase}/roles`;
+  private readonly urlCrear = `${this.apiRolesBase}/crearRoles`;
+  private readonly urlActualizar = `${this.apiRolesBase}/actualizarRol`;
+  private readonly urlDesactivar = `${this.apiRolesBase}/desactivar`;
 
-  constructor() {
-    // Inicialización adicional si es necesaria
+  roles = signal<Rol[]>([]);
+  busqueda = signal('');
+  cargando = signal(false);
+  errorCarga = signal('');
+
+  modal = signal<ModoModal>('ninguno');
+  rolSeleccionado = signal<Rol | null>(null);
+  rolForm: Partial<Rol> = {};
+  guardando = signal(false);
+  errorFormulario = signal('');
+  rolesFiltrados = computed(() => {
+    const termino = this.busqueda().trim().toLowerCase();
+    const lista = this.roles();
+    if (!termino) return lista;
+    return lista.filter(r =>
+      (r.nombreRol ?? '').toLowerCase().includes(termino) ||
+      (r.descripcion ?? '').toLowerCase().includes(termino)
+    );
+  });
+  private getTunnelHeaders() {
+    return new HttpHeaders({
+      'X-Tunnel-Skip-AntiPhishing-Page': 'true',
+      'Accept': 'application/json'
+    });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.cargarRoles();
   }
 
-  cargarRoles() {
-    console.log('Cargando roles...');
-    this.http.get<any>(this.url).subscribe({
+  cargarRoles(): void {
+    this.cargando.set(true);
+    this.errorCarga.set('');
+
+    this.http.get<ApiResponse<Rol[]>>(this.urlObtenerTodos, { headers: this.getTunnelHeaders() }).subscribe({
       next: (res) => {
-        console.log('Respuesta recibida:', res);
-        if (res && res.success) {
-          this.roles = res.data || [];
-        } else if (Array.isArray(res)) {
-          this.roles = res;
-        } else if (res && res.data) {
-          this.roles = res.data;
+        if (res && res.success && Array.isArray(res.data)) {
+          const listaSaneada = res.data.map(rol => ({
+            ...rol,
+            activo: rol.activo === null ? true : !!rol.activo
+          }));
+          this.roles.set(listaSaneada);
         } else {
-          this.roles = [];
-          console.warn('Formato de respuesta no reconocido:', res);
+          this.roles.set([]);
+          console.warn('Formato de respuesta desconocido:', res);
         }
-        console.log('Roles cargados:', this.roles);
+        this.cargando.set(false);
       },
       error: (err) => {
         console.error('Error al cargar roles:', err);
-        this.roles = [];
+        this.errorCarga.set(err.error?.message || 'No se pudieron cargar los roles. Verifica tu conexión.');
+        this.cargando.set(false);
       }
     });
   }
+  abrirVer(rol: Rol): void {
+    this.rolSeleccionado.set(rol);
+    this.modal.set('ver');
+  }
 
-  agregarRol() {
-    if (!this.nuevoRol.nombreRol) {
-      alert('El nombre del rol es obligatorio');
+  abrirCrear(): void {
+    this.rolForm = {
+      nombreRol: '',
+      descripcion: ''
+    };
+    this.errorFormulario.set('');
+    this.modal.set('crear');
+  }
+
+  abrirEditar(rol: Rol): void {
+    this.rolForm = { ...rol };
+    this.errorFormulario.set('');
+    this.modal.set('editar');
+  }
+
+  abrirEliminar(rol: Rol): void {
+    this.rolSeleccionado.set(rol);
+    this.errorFormulario.set('');
+    this.modal.set('eliminar');
+  }
+
+  cerrarModal(): void {
+    this.modal.set('ninguno');
+    this.rolSeleccionado.set(null);
+    this.errorFormulario.set('');
+  }
+  guardarRol(): void {
+    const f = this.rolForm;
+
+    if (!f.nombreRol?.trim() || !f.descripcion?.trim()) {
+      this.errorFormulario.set('Completa todos los campos obligatorios.');
       return;
     }
-    
-    console.log('Creando rol:', this.nuevoRol);
-    this.http.post(`${environment.apiUrl}/api/rol/crearRoles`, this.nuevoRol).subscribe({
-      next: (res) => {
-        console.log('Rol creado:', res);
-        this.nuevoRol = { nombreRol: '', descripcion: '' };
-        this.mostrarFormulario = false;
-        this.cargarRoles();
-      },
-      error: (err) => {
-        console.error('Error al crear rol:', err);
-        alert('Error al crear rol: ' + (err.error?.message || err.message));
-      }
-    });
-  }
 
-  eliminarRol(id: number) {
-    if (confirm('¿Desactivar este rol?')) {
-      console.log('Eliminando rol ID:', id);
-      this.http.put(`${environment.apiUrl}/api/rol/desactivar/${id}`, {}).subscribe({
+    this.guardando.set(true);
+    this.errorFormulario.set('');
+
+    if (this.modal() === 'crear') {
+      const nuevoRol = {
+        nombreRol: f.nombreRol.trim(),
+        descripcion: f.descripcion.trim(),
+        activo: true 
+      };
+
+      this.http.post<ApiResponse<Rol>>(this.urlCrear, nuevoRol, { headers: this.getTunnelHeaders() }).subscribe({
         next: (res) => {
-          console.log('Rol desactivado:', res);
-          this.cargarRoles();
+          if (res.success) {
+            this.guardando.set(false);
+            this.cerrarModal();
+            this.cargarRoles();
+          } else {
+            this.guardando.set(false);
+            this.errorFormulario.set(res.message || 'Error al guardar el rol.');
+          }
         },
         error: (err) => {
-          console.error('Error al desactivar rol:', err);
-          alert('Error al desactivar: ' + (err.error?.message || err.message));
+          console.error(err);
+          this.guardando.set(false);
+          this.errorFormulario.set(err.error?.message || 'No se pudo registrar el rol.');
+        }
+      });
+      return;
+    }
+
+    if (this.modal() === 'editar' && f.idRol) {
+      const rolActualizado = {
+        idRol: f.idRol,
+        nombreRol: f.nombreRol.trim(),
+        descripcion: f.descripcion.trim(),
+        activo: f.activo
+      };
+      this.http.put<ApiResponse<Rol>>(`${this.urlActualizar}/${f.idRol}`, rolActualizado, { headers: this.getTunnelHeaders() }).subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.guardando.set(false);
+            this.cerrarModal();
+            this.cargarRoles();
+          } else {
+            this.guardando.set(false);
+            this.errorFormulario.set(res.message || 'Error al actualizar el rol.');
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.guardando.set(false);
+          this.errorFormulario.set(err.error?.message || 'No se pudo actualizar el rol.');
         }
       });
     }
   }
+  confirmarEliminar(): void {
+    const rol = this.rolSeleccionado();
+    if (!rol) return;
 
-  // Método opcional para debugging
-  testConexion() {
-    this.http.get(`${environment.apiUrl}/api/rol/test`).subscribe({
-      next: (res) => console.log('Conexión exitosa:', res),
-      error: (err) => console.error('Error de conexión:', err)
+    this.guardando.set(true);
+    this.errorFormulario.set('');
+    this.http.put<ApiResponse<boolean>>(`${this.urlDesactivar}/${rol.idRol}`, {}, { headers: this.getTunnelHeaders() }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.guardando.set(false);
+          this.cerrarModal();
+          this.cargarRoles();
+        } else {
+          this.guardando.set(false);
+          this.errorFormulario.set(res.message || 'No se pudo desactivar el rol.');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.guardando.set(false);
+        this.errorFormulario.set(err.error?.message || 'Error de conexión con el servidor.');
+      }
     });
   }
 }

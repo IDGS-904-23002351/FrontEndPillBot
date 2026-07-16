@@ -1,22 +1,23 @@
-<!-- shared/menu/menu.component.html -->
 <div class="sidebar">
-  <div class="user-info">
-    <h3>{{ userName }}</h3>
-    <span class="badge">{{ userRol }}</span>
+  <div class="sidebar-header">
+    <h1>Panel {{ userRol }}</h1>
   </div>
-  
+
+  <hr class="separator" />
+
   <nav class="menu">
     <ul>
       <li *ngFor="let item of menuItems">
-        <a [routerLink]="item.route" routerLinkActive="active">
-          <span class="material-icons">{{ item.icon }}</span>
+        <a [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
           {{ item.label }}
         </a>
       </li>
     </ul>
   </nav>
-  
-  <button (click)="logout()" class="logout-btn">
-    Cerrar Sesión
+
+  <hr class="separator" />
+
+  <button (click)="logout()" class="logout-link">
+    Cerrar sesión
   </button>
 </div>
