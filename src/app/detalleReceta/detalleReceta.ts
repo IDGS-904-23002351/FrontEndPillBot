@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service'; // ← ajusta la ruta si es distinta
+
 
 // Modelo tal como lo devuelve GET /api/detalleReceta/receta/{id_receta}
 // (mismos campos que el modelo DetalleReceta del backend, en camelCase)
@@ -52,6 +54,8 @@ export class DetalleRecetaComponent implements OnInit {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private authService = inject(AuthService); // ← nuevo
+
 
   // Ajusta esta base si tu backend corre en otro puerto/ruta
   private readonly apiDetalleReceta = 'https://localhost:7046/api/detalleReceta';
@@ -143,7 +147,15 @@ export class DetalleRecetaComponent implements OnInit {
   }
 
   volver(): void {
-    this.router.navigate(['/recetas']);
+    const base = this.obtenerBasePorRol();
+    this.router.navigate([`${base}/recetas`]);
+  }
+
+  private obtenerBasePorRol(): string {
+    const rol = this.authService.getRol()?.toLowerCase();
+    if (rol === 'medico') return '/medico';
+    if (rol === 'administrador') return '/admin';
+    return '';
   }
 
   // ---------- Modales ----------

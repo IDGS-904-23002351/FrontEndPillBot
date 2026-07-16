@@ -12,6 +12,7 @@ import { AuthGuard } from './guard/auth.guard';
 import { RolGuard } from './guard/rol.guard';
 import { MedicamentosComponent } from './medicamentos/medicamentos';
 import { ExpedienteClinicoComponent } from './expedienteClinico/expedienteClinico';
+import { MedicoLayout } from './shared/medico-layout/medico-layout'; // ← corregido
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -55,15 +56,15 @@ export const routes: Routes = [
   },
   {
     path: 'medico',
-    component: AdminLayoutLayout,
+    component: MedicoLayout,
     canActivate: [AuthGuard, RolGuard],
     data: { roles: ['medico'] },
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Inicio },
-      { path: 'medicamentos', component: MedicamentosComponent },
+      { path: '', redirectTo: 'expediente-clinico', pathMatch: 'full' },
       { path: 'expediente-clinico', component: ExpedienteClinicoComponent },
-      { path: 'pacientes', component: Roles }
+      { path: 'medicamentos', component: MedicamentosComponent },
+      { path: 'recetas', component: RecetaComponent },
+      { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent }
     ]
   },
 

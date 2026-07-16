@@ -16,17 +16,18 @@ export class AuthService {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.cargarSesion();
   }
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/loginWeb`, credentials)
-      .pipe(
-        tap((response: any) => {
-          if (response && response.nombreRol) {
-            this.guardarSesion(response);
-          }
-          return response;
-        })
-      );
-  }
+login(credentials: any): Observable<any> {
+  return this.http.post(`${this.apiUrl}/loginWeb`, credentials)
+    .pipe(
+      tap((response: any) => {
+        const userData = response?.data;
+        if (userData && userData.nombreRol) {
+          this.guardarSesion(userData);
+        }
+        return response;
+      })
+    );
+}
   logout(): void {
     if (this.isBrowser) {
       localStorage.removeItem('user');

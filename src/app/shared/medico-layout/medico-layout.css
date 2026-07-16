@@ -1,0 +1,117 @@
+:host {
+  --navy: #1b2559;
+  --blue-accent: #2f5fda;
+  --bg-page: #eef0f5;
+  --border: #e4e7f0;
+  --text-gray: #6b7290;
+
+  display: block;
+  height: 100%;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.medico-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--navy);
+  padding: 20px 14px;
+  box-sizing: border-box;
+}
+
+.sidebar-titulo {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 0 10px 20px 10px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #c7cbe6;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.nav-item.nav-activo {
+  background: var(--blue-accent);
+  color: #fff;
+}
+
+/* ---- Contenido ---- */
+.contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-page);
+  min-width: 0;
+}
+
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.usuario-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.usuario-nombre {
+  color: var(--blue-accent);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.main-area {
+  flex: 1;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .medico-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
+}

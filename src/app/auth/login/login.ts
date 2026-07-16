@@ -38,10 +38,10 @@ export class Login {
       correo: this.usuario.correo, 
       contrasena: this.usuario.contrasena 
     }).subscribe({
-      next: (response: any) => {
-        this.loading = false;
-        this.redirigirPorRol(response.nombreRol);
-      },
+     next: (response: any) => {
+  this.loading = false;
+  this.redirigirPorRol(response.data.nombreRol);
+},
       error: (err) => {
         this.loading = false;
         this.error = err.error?.message || 'Credenciales incorrectas';
@@ -50,14 +50,14 @@ export class Login {
     });
   }
 
-  private redirigirPorRol(rol: string) {
-    const rutasPorRol: { [key: string]: string } = {
-      'administrador': '/admin/dashboard',
-      'medico': '/medico/dashboard',
-      'paciente': '/cliente/carrito'
-    };
+private redirigirPorRol(rol: string) {
+  const rutasPorRol: { [key: string]: string } = {
+    'administrador': '/admin/dashboard',
+    'medico': '/medico/expediente-clinico',   // ← antes: '/medico/dashboard'
+    'paciente': '/cliente/carrito'
+  };
 
-    const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
-    this.router.navigate([ruta]);
-  }
+  const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
+  this.router.navigate([ruta]);
+}
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service'; // ← ajusta la ruta si es distinta
 
 export interface Receta {
   idReceta: number;
@@ -32,6 +33,8 @@ type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
 export class RecetaComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private authService = inject(AuthService); // ← nuevo
+
 
   // Ajusta esta base si tu backend corre en otro puerto/ruta
   private readonly apiRecetas = 'https://localhost:7046/api/recetas';
@@ -97,9 +100,17 @@ export class RecetaComponent implements OnInit {
   // ---------- Navegación a Detalle de Receta ----------
 
   irDetalleReceta(receta: Receta): void {
-    this.router.navigate(['/detalle-receta', receta.idReceta], {
+    const base = this.obtenerBasePorRol();
+    this.router.navigate([`${base}/detalle-receta`, receta.idReceta], {
       queryParams: { padecimiento: receta.padecimiento ?? '' }
     });
+  }
+
+  private obtenerBasePorRol(): string {
+    const rol = this.authService.getRol()?.toLowerCase();
+    if (rol === 'medico') return '/medico';
+    if (rol === 'administrador') return '/admin';
+    return ''; // fallback a la ruta top-level sin layout
   }
 
   // ---------- Modales ----------

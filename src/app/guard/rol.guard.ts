@@ -30,14 +30,13 @@ export class RolGuard implements CanActivate {
     return false;
   }
 
-  private redirigirPorRol(rol: string): void {
-    const rutasPorRol: { [key: string]: string } = {
-      'administrador': '/admin/dashboard',
-      'medico': '/medico/dashboard',
-      'paciente': '/cliente/carrito'
-    };
-
-    const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
-    this.router.navigate([ruta]);
-  }
+private redirigirPorRol(rol: string): void {
+  const rutasPorRol: { [key: string]: string } = {
+    'administrador': '/admin/dashboard',
+    'medico': '/medico/expediente-clinico',   // ← igual aquí
+    'paciente': '/cliente/carrito'
+  };
+  const ruta = rutasPorRol[rol.toLowerCase()] || '/inicio';
+  this.router.navigate([ruta]);
+}
 }
