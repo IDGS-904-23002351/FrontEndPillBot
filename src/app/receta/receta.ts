@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service'; // ← ajusta la ruta si es distinta
+import { environment } from '../../environments/environment';
 
 export interface Receta {
   idReceta: number;
@@ -37,9 +38,9 @@ export class RecetaComponent implements OnInit {
 
 
   // Ajusta esta base si tu backend corre en otro puerto/ruta
-  private readonly apiRecetas = 'https://localhost:7046/api/recetas';
+  private readonly apiRecetas = `${environment.apiUrl}/api/recetas`;
   // Se asume un endpoint que regresa { idCliente, nombreCompleto } para el selector.
-  private readonly apiClientes = 'https://localhost:7046/api/clientes';
+  private readonly apiClientes = `${environment.apiUrl}/api/clientes`;
 
   recetas = signal<Receta[]>([]);
   clientes = signal<Cliente[]>([]);
@@ -67,20 +68,91 @@ export class RecetaComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarRecetas();
-    this.cargarClientes();
+    if (!this.esCliente()) {
+      this.cargarClientes();
+    }
+  }
+
+  esCliente(): boolean {
+    const rol = this.authService
+      .getRol()
+      ?.trim()
+      .toLowerCase();
+    return rol === 'cliente';
+  }
+
+  esAdministrador(): boolean {
+    const rol = this.authService
+      .getRol()
+      ?.trim()
+      .toLowerCase();
+    return rol === 'administrador';
+  }
+
+  esMedico(): boolean {
+    const rol = this.authService
+      .getRol()
+      ?.trim()
+      .toLowerCase();
+    return rol === 'medico';
+  }
+
+  puedeEditar(): boolean {
+    return this.esAdministrador() || this.esMedico();
   }
 
   cargarRecetas(): void {
     this.cargando.set(true);
     this.errorCarga.set('');
+    if (this.esCliente()) {
+      this.cargarRecetasCliente();
+      return;
+    }
+
     this.http.get<Receta[]>(this.apiRecetas).subscribe({
       next: (data) => {
         this.recetas.set(data ?? []);
         this.cargando.set(false);
       },
       error: () => {
-        this.errorCarga.set('No se pudieron cargar las recetas. Verifica la conexión con el servidor.');
+        this.errorCarga.set(
+          'No se pudieron cargar las recetas. Verifica la conexión con el servidor.'
+        );
         this.cargando.set(false);
+      }
+    });
+  }
+
+  private cargarRecetasCliente(): void {
+    const idUsuario = this.authService.getIdUsuario();
+    if (idUsuario === null) {
+      this.recetas.set([]);
+      this.cargando.set(false);
+      this.errorCarga.set(
+        'No se encontró la información del usuario que inició sesión.'
+      );
+      return;
+    }
+
+    const url =
+      `${this.apiRecetas}/cliente/${idUsuario}`;
+    this.http.get<Receta[]>(url).subscribe({
+      next: (data) => {
+        this.recetas.set(data ?? []);
+        this.cargando.set(false);
+      },
+      error: (error) => {
+        console.error(
+          'Error al consultar las recetas del cliente:',
+          error
+        );
+
+        this.recetas.set([]);
+        this.cargando.set(false);
+        this.errorCarga.set(
+          error?.error?.mensaje ??
+          'No se pudieron cargar tus recetas.'
+        );
       }
     });
   }
@@ -93,6 +165,10 @@ export class RecetaComponent implements OnInit {
   }
 
   nombreCliente(idCliente: number): string {
+    if (this.esCliente()) {
+      const nombreUsuario = this.authService.getUserName();
+      return nombreUsuario || `Cliente #${idCliente}`;
+    }
     const cliente = this.clientes().find(c => c.idCliente === idCliente);
     return cliente ? cliente.nombreCompleto : `Cliente #${idCliente}`;
   }
@@ -109,7 +185,8 @@ export class RecetaComponent implements OnInit {
   private obtenerBasePorRol(): string {
     const rol = this.authService.getRol()?.toLowerCase();
     if (rol === 'medico') return '/medico';
-    if (rol === 'administrador') return '/admin';
+    if (rol === 'administrador') {return '/admin';}
+    if (rol === 'cliente') {return '/cliente';}
     return ''; // fallback a la ruta top-level sin layout
   }
 

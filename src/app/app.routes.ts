@@ -38,25 +38,19 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Inicio },
-
       { path: 'roles', component: Roles },
-      { path: 'carrito', component: Carrito },
-      { path: 'compras', component: Compras },
-
+      // { path: 'carrito', component: Carrito },
+      // { path: 'compras', component: Compras },
       { path: 'productos', component: InventarioProductos },
+      { path: 'recetas', component: RecetaComponent },
+      { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent},
       { path: 'medicamentos', component: MedicamentosComponent },
-
       { path: 'clientes', component: Roles },
       { path: 'empleados', component: Roles },
       { path: 'usuarios', component: Roles },
-
       { path: 'ventas', component: Ventas },
       { path: 'dashboard-ventas', component: DashboardVentas },
-
-      {
-        path: 'expediente-clinico',
-        component: ExpedienteClinicoComponent
-      }
+      { path: 'expediente-clinico', component: ExpedienteClinicoComponent}
     ]
   },
 
@@ -69,11 +63,10 @@ export const routes: Routes = [
       { path: '', redirectTo: 'carrito', pathMatch: 'full' },
       { path: 'carrito', component: Carrito },
       { path: 'compras', component: Compras },
+      { path: 'recetas', component: RecetaComponent },
+      { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent },
       { path: 'medicamentos', component: MedicamentosComponent },
-      {
-        path: 'expediente-clinico',
-        component: ExpedienteClinicoComponent
-      }
+      {path: 'expediente-clinico', component: ExpedienteClinicoComponent}
     ]
   },
 

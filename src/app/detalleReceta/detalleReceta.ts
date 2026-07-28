@@ -143,8 +143,15 @@ export class DetalleRecetaComponent implements OnInit {
     const rol = this.authService.getRol()?.toLowerCase();
     if (rol === 'medico') return '/medico';
     if (rol === 'administrador') return '/admin';
+    if (rol === 'cliente') { return '/cliente';}
     return '';
   }
+
+  esAdministrador(): boolean {return this.authService.getRol()?.toLowerCase() === 'administrador';}
+  esMedico(): boolean {return this.authService.getRol()?.toLowerCase() === 'medico';}
+  esCliente(): boolean {return this.authService.getRol()?.toLowerCase() === 'cliente';}
+  puedeEditar(): boolean {return this.esAdministrador() || this.esMedico();}
+
   abrirCrear(): void {
     this.detalleForm = {
       idMedicamento: undefined,

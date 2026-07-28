@@ -134,8 +134,8 @@ export class MenuComponent implements OnInit {
           { label: 'Usuarios', route: '/usuarios' },
           { label: 'Recetas', route: '/recetas' },
           { label: 'Medicamentos', route: '/medicamentos' },
-          { label: 'Carrito', route: '/carrito' },
-          { label: 'Compras', route: '/compras' }
+          // { label: 'Carrito', route: '/carrito' },
+          // { label: 'Compras', route: '/compras' }
         ];
       } else {
         this.menuItems = [

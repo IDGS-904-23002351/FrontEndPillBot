@@ -25,7 +25,7 @@
         (ngModelChange)="busqueda.set($event)"
         name="busqueda"
       />
-      <button type="button" class="btn-primario" (click)="abrirCrear()">
+      <button *ngIf="puedeEditar()" type="button" class="btn-primario" (click)="abrirCrear()">
         <span class="btn-icono">+</span> Añadir Detalle
       </button>
     </div>
@@ -42,18 +42,19 @@
             <th>Frecuencia (hrs)</th>
             <th>Duración (días)</th>
             <th>Núm. Tratamiento</th>
-            <th>Acciones</th>
+            <th >Acciones</th>
+            <th *ngIf="puedeEditar()">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngIf="cargando()">
-            <td colspan="9" class="estado-mensaje">Cargando detalles...</td>
+            <td [attr.colspan]="puedeEditar() ? 9 : 8" class="estado-mensaje">Cargando detalles...</td>
           </tr>
           <tr *ngIf="!cargando() && errorCarga()">
-            <td colspan="9" class="estado-mensaje estado-error">{{ errorCarga() }}</td>
+            <td [attr.colspan]="puedeEditar() ? 9 : 8" class="estado-mensaje estado-error">{{ errorCarga() }}</td>
           </tr>
           <tr *ngIf="!cargando() && !errorCarga() && detallesFiltrados().length === 0">
-            <td colspan="9" class="estado-mensaje">No se encontraron detalles de receta.</td>
+            <td [attr.colspan]="puedeEditar() ? 9 : 8" class="estado-mensaje">No se encontraron detalles de receta.</td>
           </tr>
 
           <tr *ngFor="let detalle of detallesFiltrados()">
@@ -65,7 +66,7 @@
             <td>{{ detalle.frecuenciaHoras ?? '—' }}</td>
             <td>{{ detalle.duracionDias ?? '—' }}</td>
             <td>{{ detalle.numeroTratamiento ?? '—' }}</td>
-            <td class="celda-acciones">
+            <td class="celda-acciones" *ngIf="puedeEditar()">
               <button type="button" class="icono-accion icono-editar" title="Editar" (click)="abrirEditar(detalle)">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 20h9"/>
@@ -81,7 +82,7 @@
 </div>
 
 <!-- ===================== MODAL: CREAR / EDITAR DETALLE ===================== -->
-<div class="modal-overlay" *ngIf="modal() === 'crear' || modal() === 'editar'">
+<div class="modal-overlay" *ngIf="(modal() === 'crear' || modal() === 'editar') && puedeEditar()">
   <div class="modal-caja">
     <div class="modal-encabezado">
       <h3>{{ modal() === 'crear' ? 'Añadir Detalle de Receta' : 'Editar Detalle de Receta' }}</h3>
