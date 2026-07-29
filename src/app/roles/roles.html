@@ -44,8 +44,8 @@
             <td style="font-weight: 600; color: var(--navy);">{{ rol.nombreRol }}</td>
             <td>{{ rol.descripcion || '—' }}</td>
             <td>
-              <span class="badge" [class.badge-activo]="rol.activo" [class.badge-inactivo]="!rol.activo">
-                {{ rol.activo ? 'Activo' : 'Inactivo' }}
+              <span class="badge" [class.badge-activo]="rol.estatus === 1" [class.badge-inactivo]="rol.estatus === 0">
+                {{ rol.estatus === 1 ? 'Activo' : 'Inactivo' }}
               </span>
             </td>
             <td class="celda-acciones">
@@ -96,8 +96,8 @@
       </div>
       <div class="detalle-fila">
         <span class="detalle-etiqueta">Estado</span>
-        <span class="badge" [class.badge-activo]="r.activo" [class.badge-inactivo]="!r.activo">
-          {{ r.activo ? 'Activo' : 'Inactivo' }}
+        <span class="badge" [class.badge-activo]="r.estatus === 1" [class.badge-inactivo]="r.estatus === 0">
+          {{ r.estatus === 1 ? 'Activo' : 'Inactivo' }}
         </span>
       </div>
     </div>
@@ -126,6 +126,15 @@
         <label for="descripcion">Descripción <span class="obligatorio">*</span></label>
         <textarea id="descripcion" name="descripcion" rows="3" maxlength="255"
                   [(ngModel)]="rolForm.descripcion" required placeholder="Describe las responsabilidades del rol"></textarea>
+      </div>
+
+      <!-- SELECTOR DE ESTADO AGREGADO AQUÍ -->
+      <div class="campo" *ngIf="modal() === 'editar'">
+        <label for="estatus">Estado</label>
+        <select id="estatus" name="estatus" [(ngModel)]="rolForm.estatus" class="form-select">
+          <option [value]="1">Activo</option>
+          <option [value]="0">Inactivo</option>
+        </select>
       </div>
 
       <p class="mensaje-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>

@@ -8,7 +8,7 @@ export interface Rol {
   idRol: number;
   nombreRol: string;
   descripcion: string;
-  activo?: boolean | null;
+  estatus: number; 
 }
 export interface ApiResponse<T> {
   success: boolean;
@@ -40,7 +40,11 @@ export class Roles implements OnInit {
 
   modal = signal<ModoModal>('ninguno');
   rolSeleccionado = signal<Rol | null>(null);
-  rolForm: Partial<Rol> = {};
+  rolForm: Partial<Rol> = {
+  nombreRol: '',
+  descripcion: '',
+  estatus: 1 
+};
   guardando = signal(false);
   errorFormulario = signal('');
   rolesFiltrados = computed(() => {
@@ -72,7 +76,7 @@ export class Roles implements OnInit {
         if (res && res.success && Array.isArray(res.data)) {
           const listaSaneada = res.data.map(rol => ({
             ...rol,
-            activo: rol.activo === null ? true : !!rol.activo
+            estatus: rol.estatus ?? 1 
           }));
           this.roles.set(listaSaneada);
         } else {
@@ -96,17 +100,21 @@ export class Roles implements OnInit {
   abrirCrear(): void {
     this.rolForm = {
       nombreRol: '',
-      descripcion: ''
+      descripcion: '',
+      estatus: 1
     };
     this.errorFormulario.set('');
     this.modal.set('crear');
   }
 
-  abrirEditar(rol: Rol): void {
-    this.rolForm = { ...rol };
-    this.errorFormulario.set('');
-    this.modal.set('editar');
-  }
+abrirEditar(rol: Rol): void {
+  this.rolForm = { 
+    ...rol,
+    estatus: rol.estatus ?? 1 
+  };
+  this.errorFormulario.set('');
+  this.modal.set('editar');
+}
 
   abrirEliminar(rol: Rol): void {
     this.rolSeleccionado.set(rol);
@@ -134,7 +142,7 @@ export class Roles implements OnInit {
       const nuevoRol = {
         nombreRol: f.nombreRol.trim(),
         descripcion: f.descripcion.trim(),
-        activo: true 
+         estatus: 1
       };
 
       this.http.post<ApiResponse<Rol>>(this.urlCrear, nuevoRol, { headers: this.getTunnelHeaders() }).subscribe({
@@ -162,7 +170,7 @@ export class Roles implements OnInit {
         idRol: f.idRol,
         nombreRol: f.nombreRol.trim(),
         descripcion: f.descripcion.trim(),
-        activo: f.activo
+        estatus: f.estatus 
       };
       this.http.put<ApiResponse<Rol>>(`${this.urlActualizar}/${f.idRol}`, rolActualizado, { headers: this.getTunnelHeaders() }).subscribe({
         next: (res) => {
