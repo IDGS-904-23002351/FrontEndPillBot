@@ -32,49 +32,46 @@
 
     <div class="recetas-tabla-wrapper">
       <table class="recetas-tabla">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Padecimiento</th>
-            <th>Medicamento</th>
-            <th>Dosis</th>
-            <th>Indicaciones</th>
-            <th>Frecuencia (hrs)</th>
-            <th>Duración (días)</th>
-            <th>Núm. Tratamiento</th>
-            <th >Acciones</th>
-            <th *ngIf="puedeEditar()">Acciones</th>
-          </tr>
-        </thead>
+   <thead>
+  <tr>
+    <th>Padecimiento</th>
+    <th>Medicamento</th>
+    <th>Dosis</th>
+    <th>Indicaciones</th>
+    <th>Frecuencia (hrs)</th>
+    <th>Duración (días)</th>
+    <th>Núm. Tratamiento</th>
+    <th *ngIf="puedeEditar()">Acciones</th>
+  </tr>
+</thead>
         <tbody>
-          <tr *ngIf="cargando()">
-            <td [attr.colspan]="puedeEditar() ? 9 : 8" class="estado-mensaje">Cargando detalles...</td>
-          </tr>
-          <tr *ngIf="!cargando() && errorCarga()">
-            <td [attr.colspan]="puedeEditar() ? 9 : 8" class="estado-mensaje estado-error">{{ errorCarga() }}</td>
-          </tr>
-          <tr *ngIf="!cargando() && !errorCarga() && detallesFiltrados().length === 0">
-            <td [attr.colspan]="puedeEditar() ? 9 : 8" class="estado-mensaje">No se encontraron detalles de receta.</td>
-          </tr>
+       <tr *ngIf="cargando()">
+  <td [attr.colspan]="puedeEditar() ? 8 : 7" class="estado-mensaje">Cargando detalles...</td>
+</tr>
+<tr *ngIf="!cargando() && errorCarga()">
+  <td [attr.colspan]="puedeEditar() ? 8 : 7" class="estado-mensaje estado-error">{{ errorCarga() }}</td>
+</tr>
+<tr *ngIf="!cargando() && !errorCarga() && detallesFiltrados().length === 0">
+  <td [attr.colspan]="puedeEditar() ? 8 : 7" class="estado-mensaje">No se encontraron detalles de receta.</td>
+</tr>
 
-          <tr *ngFor="let detalle of detallesFiltrados()">
-            <td>{{ detalle.idDetalleReceta }}</td>
-            <td class="celda-padecimiento">{{ detalle.padecimiento || '—' }}</td>
-            <td>{{ detalle.nombreComercial || '—' }}</td>
-            <td>{{ detalle.dosis || '—' }}</td>
-            <td class="celda-padecimiento">{{ detalle.indicaciones || '—' }}</td>
-            <td>{{ detalle.frecuenciaHoras ?? '—' }}</td>
-            <td>{{ detalle.duracionDias ?? '—' }}</td>
-            <td>{{ detalle.numeroTratamiento ?? '—' }}</td>
-            <td class="celda-acciones" *ngIf="puedeEditar()">
-              <button type="button" class="icono-accion icono-editar" title="Editar" (click)="abrirEditar(detalle)">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9"/>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/>
-                </svg>
-              </button>
-            </td>
-          </tr>
+         <tr *ngFor="let detalle of detallesFiltrados()">
+  <td class="celda-padecimiento">{{ detalle.padecimiento || '—' }}</td>
+  <td>{{ detalle.nombreComercial || '—' }}</td>
+  <td>{{ detalle.dosis || '—' }}</td>
+  <td class="celda-padecimiento">{{ detalle.indicaciones || '—' }}</td>
+  <td>{{ detalle.frecuenciaHoras ?? '—' }}</td>
+  <td>{{ detalle.duracionDias ?? '—' }}</td>
+  <td>{{ detalle.numeroTratamiento ?? '—' }}</td>
+  <td class="celda-acciones" *ngIf="puedeEditar()">
+    <button type="button" class="icono-accion icono-editar" title="Editar" (click)="abrirEditar(detalle)">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/>
+      </svg>
+    </button>
+  </td>
+</tr>
         </tbody>
       </table>
     </div>
