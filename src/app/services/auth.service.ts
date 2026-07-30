@@ -16,19 +16,21 @@ export class AuthService {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.cargarSesion();
   }
-login(credentials: any): Observable<any> {
-  return this.http
-    .post(`${this.apiUrl}/login`, credentials)
-    .pipe(
-      tap((response: any) => {
-        const userData = response?.data;
 
-        if (userData && userData.nombreRol) {
-          this.guardarSesion(userData);
-        }
-      })
-    );
-}
+  login(credentials: any): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl}/login`, credentials)
+      .pipe(
+        tap((response: any) => {
+          const userData = response?.data;
+
+          if (userData && userData.nombreRol) {
+            this.guardarSesion(userData);
+          }
+        })
+      );
+  }
+
   logout(): void {
     if (this.isBrowser) {
       localStorage.removeItem('user');
@@ -38,6 +40,7 @@ login(credentials: any): Observable<any> {
     }
     this.userSubject.next(null);
   }
+
   private guardarSesion(userData: any): void {
     if (this.isBrowser) {
       localStorage.setItem('user', JSON.stringify(userData));
@@ -49,6 +52,7 @@ login(credentials: any): Observable<any> {
     }
     this.userSubject.next(userData);
   }
+
   private cargarSesion(): void {
     if (this.isBrowser) {
       const user = localStorage.getItem('user');
@@ -57,22 +61,27 @@ login(credentials: any): Observable<any> {
       }
     }
   }
+
   getRol(): string | null {
     return this.isBrowser ? localStorage.getItem('rol') : null;
   }
+
   getIdUsuario(): number | null {
     if (!this.isBrowser) return null;
     const id = localStorage.getItem('idUsuario');
     return id ? parseInt(id) : null;
   }
+
   getToken(): string | null {
     return this.isBrowser ? localStorage.getItem('token') : null;
   }
+
   getUser(): any {
     if (!this.isBrowser) return null;
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
+
   getUserName(): string {
     const user = this.getUser();
     if (user) {
@@ -81,22 +90,26 @@ login(credentials: any): Observable<any> {
     }
     return '';
   }
+
   isAuthenticated(): boolean {
     if (!this.isBrowser) return false;
     return !!localStorage.getItem('user') && !!localStorage.getItem('rol');
   }
+
   hasRole(role: string): boolean {
     const userRol = this.getRol();
     return userRol?.toLowerCase() === role.toLowerCase();
   }
+
   hasAnyRole(roles: string[]): boolean {
     const userRol = this.getRol();
     if (!userRol) return false;
     return roles.some(rol => rol.toLowerCase() === userRol.toLowerCase());
   }
+
   getMenuItems(): any[] {
     const rol = this.getRol()?.toLowerCase();
-    
+
     const menus: { [key: string]: any[] } = {
       'administrador': [
         { icon: 'dashboard', label: 'Dashboard', route: '/admin/dashboard' },
@@ -111,9 +124,9 @@ login(credentials: any): Observable<any> {
         { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' }
       ],
       'medico': [
-        { icon: 'dashboard', label: 'Dashboard', route: '/medico/dashboard' },
-        { icon: 'medical_services', label: 'Recetas', route: '/medico/recetas' },
-        { icon: 'groups', label: 'Pacientes', route: '/medico/pacientes' }
+        { icon: 'groups', label: 'Pacientes', route: '/medico/expediente-clinico' },
+        { icon: 'medication', label: 'Medicamentos', route: '/medico/medicamentos' },
+        { icon: 'medical_services', label: 'Recetas', route: '/medico/recetas' }
       ],
       'cliente': [
         { icon: 'home', label: 'Inicio', route: '/inicio' },

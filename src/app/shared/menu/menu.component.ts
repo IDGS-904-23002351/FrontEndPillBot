@@ -106,7 +106,7 @@ import { AuthService } from '../../services/auth.service';
     .logout-link:hover {
       background-color: rgba(255, 255, 255, 0.05);
     }
-      
+
   `]
 })
 export class MenuComponent implements OnInit {
@@ -121,14 +121,16 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.userName = this.authService.getUserName();
-    
+
     const rawRol = this.authService.getRol() || 'Cliente';
     this.userRol = rawRol.charAt(0).toUpperCase() + rawRol.slice(1).toLowerCase();
-    
+
     this.menuItems = this.authService.getMenuItems();
 
     if (!this.menuItems || this.menuItems.length === 0) {
-      if (this.userRol.toLowerCase() === 'administrador') {
+      const rol = this.userRol.toLowerCase();
+
+      if (rol === 'administrador') {
         this.menuItems = [
           { label: 'Dashboard', route: '/dashboard' },
           { label: 'Usuarios', route: '/usuarios' },
@@ -136,6 +138,12 @@ export class MenuComponent implements OnInit {
           { label: 'Medicamentos', route: '/medicamentos' },
           // { label: 'Carrito', route: '/carrito' },
           // { label: 'Compras', route: '/compras' }
+        ];
+      } else if (rol === 'medico') {
+        this.menuItems = [
+          { label: 'Pacientes', route: '/medico/expediente-clinico' },
+          { label: 'Medicamentos', route: '/medico/medicamentos' },
+          { label: 'Recetas', route: '/medico/recetas' }
         ];
       } else {
         this.menuItems = [
