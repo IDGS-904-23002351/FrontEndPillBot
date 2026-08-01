@@ -3,6 +3,7 @@ import { RecetaComponent } from './receta/receta';
 import { DetalleRecetaComponent } from './detalleReceta/detalleReceta';
 import { Login } from './auth/login/login';
 import { Roles } from './roles/roles';
+import { Productos } from './productos/productos';
 import { Inicio } from './inicio/inicio';
 import { AdminLayoutLayout } from './shared/admin-layout/admin-layout.layout';
 import { ClienteLayout } from './shared/cliente-layout/cliente-layout';
@@ -22,6 +23,7 @@ import { DashboardVentas } from './dashboard-ventas/dashboard-ventas';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
+  { path: 'productos', component: Productos },
   { path: 'inicio', component: Inicio, canActivate: [AuthGuard] },
   { path: 'recetas', component: RecetaComponent, canActivate: [AuthGuard] },
   {

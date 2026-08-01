@@ -1,0 +1,294 @@
+<!-- src/app/pages/productos/productos.html -->
+<div class="productos-container">
+  <!-- HEADER -->
+  <header class="productos-header">
+    <div class="header-left">
+      <h1>📦 Gestión de Productos</h1>
+      <div class="stats">
+        <span class="stat-item">
+          <span class="stat-dot active"></span>
+          Activos: {{ totalActivos }}
+        </span>
+        <span class="stat-item">
+          <span class="stat-dot inactive"></span>
+          Inactivos: {{ totalInactivos }}
+        </span>
+        <span class="stat-item">
+          Total: {{ productos.length }}
+        </span>
+      </div>
+    </div>
+    <button class="btn-crear" (click)="abrirCrear()">
+      <span>➕</span> Nuevo Producto
+    </button>
+  </header>
+
+  <!-- BARRA DE BÚSQUEDA -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Buscar por nombre, SKU o descripción..."
+        [(ngModel)]="busqueda"
+        class="search-input"
+      />
+    </div>
+    <button class="btn-refresh" (click)="cargarProductos()" title="Actualizar">
+      🔄
+    </button>
+  </div>
+
+  <!-- ESTADO DE CARGA -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando productos...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="errorCarga && !cargando" class="error-state">
+    <p>⚠️ {{ errorCarga }}</p>
+    <button (click)="cargarProductos()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- TABLA DE PRODUCTOS -->
+  <div *ngIf="!cargando && !errorCarga" class="table-wrapper">
+    <table class="productos-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>SKU</th>
+          <th>Precio</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of productosFiltrados">
+          <td class="id-cell">#{{ producto.idProducto }}</td>
+          <td class="image-cell">
+            <img
+              *ngIf="producto.foto && producto.foto.length > 100"
+              [src]="producto.foto"
+              [alt]="producto.nombre"
+              class="product-thumbnail"
+            />
+            <div *ngIf="!producto.foto || producto.foto.length <= 100" class="thumbnail-placeholder">
+              💊
+            </div>
+          </td>
+          <td class="name-cell">{{ producto.nombre }}</td>
+          <td class="sku-cell">{{ producto.sku }}</td>
+          <td class="price-cell">{{ formatearPrecio(producto.precio) }}</td>
+          <td class="desc-cell">{{ producto.descripcion || 'Sin descripción' }}</td>
+          <td class="status-cell">
+            <span class="status-badge" [class.active]="producto.activo" [class.inactive]="!producto.activo">
+              {{ producto.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button class="action-btn view" (click)="abrirVer(producto)" title="Ver">👁️</button>
+            <button class="action-btn edit" (click)="abrirEditar(producto)" title="Editar">✏️</button>
+            <button class="action-btn delete" (click)="abrirEliminar(producto)" title="Eliminar">🗑️</button>
+          </td>
+        </tr>
+        <tr *ngIf="productosFiltrados.length === 0" class="empty-row">
+          <td colspan="8">
+            <div class="empty-state">
+              <span class="empty-icon">📭</span>
+              <p>No se encontraron productos</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========== MODAL: VER ========== -->
+  <div class="modal-overlay" *ngIf="modal === 'ver'" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Detalles del Producto</h2>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body ver-modal" *ngIf="productoSeleccionado">
+        <div class="detail-row">
+          <label>ID</label>
+          <span>#{{ productoSeleccionado.idProducto }}</span>
+        </div>
+        <div class="detail-row">
+          <label>Imagen</label>
+          <div class="detail-image">
+            <img
+              *ngIf="productoSeleccionado.foto && productoSeleccionado.foto.length > 100"
+              [src]="productoSeleccionado.foto"
+              [alt]="productoSeleccionado.nombre"
+              class="detail-img"
+            />
+            <div *ngIf="!productoSeleccionado.foto || productoSeleccionado.foto.length <= 100" class="detail-no-image">
+              💊
+            </div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <label>Nombre</label>
+          <span>{{ productoSeleccionado.nombre }}</span>
+        </div>
+        <div class="detail-row">
+          <label>SKU</label>
+          <span>{{ productoSeleccionado.sku }}</span>
+        </div>
+        <div class="detail-row">
+          <label>Precio</label>
+          <span class="detail-price">{{ formatearPrecio(productoSeleccionado.precio) }}</span>
+        </div>
+        <div class="detail-row">
+          <label>Descripción</label>
+          <span>{{ productoSeleccionado.descripcion || 'Sin descripción' }}</span>
+        </div>
+        <div class="detail-row">
+          <label>Estado</label>
+          <span class="status-badge" [class.active]="productoSeleccionado.activo" [class.inactive]="!productoSeleccionado.activo">
+            {{ productoSeleccionado.activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: CREAR / EDITAR ========== -->
+  <div class="modal-overlay" *ngIf="modal === 'crear' || modal === 'editar'" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ modal === 'crear' ? 'Nuevo Producto' : 'Editar Producto' }}</h2>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <form (ngSubmit)="guardarProducto()" class="modal-body">
+        <!-- Nombre -->
+        <div class="form-group">
+          <label>Nombre <span class="required">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="productoForm.nombre"
+            name="nombre"
+            placeholder="Ej: Dispensador Pro"
+            required
+          />
+        </div>
+
+        <!-- SKU -->
+        <div class="form-group">
+          <label>SKU <span class="required">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="productoForm.sku"
+            name="sku"
+            placeholder="Ej: DISP-PRO-001"
+            required
+          />
+        </div>
+
+        <!-- Precio -->
+        <div class="form-group">
+          <label>Precio <span class="required">*</span></label>
+          <input
+            type="number"
+            [(ngModel)]="productoForm.precio"
+            name="precio"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            required
+          />
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea
+            [(ngModel)]="productoForm.descripcion"
+            name="descripcion"
+            rows="3"
+            placeholder="Descripción del producto..."
+          ></textarea>
+        </div>
+
+        <!-- Foto -->
+        <div class="form-group">
+          <label>Imagen</label>
+          <div class="file-upload-wrapper">
+            <input
+              type="file"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+              class="file-input"
+            />
+            <div class="file-upload-preview" *ngIf="productoForm.foto && productoForm.foto.length > 100">
+              <img [src]="productoForm.foto" alt="Vista previa" class="preview-img" />
+              <button type="button" class="remove-img" (click)="productoForm.foto = null">✕</button>
+            </div>
+            <div class="file-upload-placeholder" *ngIf="!productoForm.foto || productoForm.foto.length <= 100">
+              <span>📷 Haz clic para seleccionar una imagen</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado (solo en edición) -->
+        <div class="form-group" *ngIf="modal === 'editar'">
+          <label>Estado</label>
+          <div class="toggle-wrapper">
+            <label class="toggle-switch">
+              <input type="checkbox" [(ngModel)]="productoForm.activo" name="activo" />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">{{ productoForm.activo ? 'Activo' : 'Inactivo' }}</span>
+          </div>
+        </div>
+
+        <!-- Error del formulario -->
+        <div *ngIf="errorFormulario" class="form-error">
+          ⚠️ {{ errorFormulario }}
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-submit" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : (modal === 'crear' ? 'Crear Producto' : 'Actualizar Producto') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: ELIMINAR ========== -->
+  <div class="modal-overlay" *ngIf="modal === 'eliminar'" (click)="cerrarModal()">
+    <div class="modal-content modal-confirm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Confirmar Desactivación</h2>
+        <button class="modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body" *ngIf="productoSeleccionado">
+        <div class="confirm-icon">⚠️</div>
+        <p class="confirm-text">
+          ¿Estás seguro de que deseas desactivar el producto <strong>"{{ productoSeleccionado.nombre }}"</strong>?
+        </p>
+        <p class="confirm-subtext">
+          El producto dejará de estar disponible en el catálogo.
+        </p>
+        <div *ngIf="errorFormulario" class="form-error">
+          ⚠️ {{ errorFormulario }}
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cerrarModal()">Cancelar</button>
+          <button type="button" class="btn-danger" (click)="confirmarEliminar()" [disabled]="guardando">
+            {{ guardando ? 'Procesando...' : 'Desactivar Producto' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
