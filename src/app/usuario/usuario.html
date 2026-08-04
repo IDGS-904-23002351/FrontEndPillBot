@@ -1,0 +1,196 @@
+<div class="recetas-page">
+  <div class="recetas-card">
+
+    <h2 class="recetas-title">Gestión de Usuarios</h2>
+
+    <div class="recetas-toolbar">
+      <input
+        type="text"
+        class="recetas-search"
+        placeholder="Buscar usuario por nombre o correo..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+        name="busqueda"
+      />
+      <button type="button" class="btn-primario" (click)="abrirCrear()">
+        <span class="btn-icono">+</span> Añadir Usuario
+      </button>
+    </div>
+
+    <div class="recetas-tabla-wrapper">
+      <table class="recetas-tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="cargando()">
+            <td colspan="6" class="estado-mensaje">Cargando usuarios...</td>
+          </tr>
+          <tr *ngIf="!cargando() && errorCarga()">
+            <td colspan="6" class="estado-mensaje estado-error">{{ errorCarga() }}</td>
+          </tr>
+          <tr *ngIf="!cargando() && !errorCarga() && usuariosFiltrados().length === 0">
+            <td colspan="6" class="estado-mensaje">No se encontraron usuarios.</td>
+          </tr>
+
+          <tr *ngFor="let usuario of usuariosFiltrados()">
+            <td>{{ usuario.persona?.nombre || '—' }}</td>
+            <td>{{ usuario.persona?.correo || '—' }}</td>
+            <td>{{ obtenerNombreRol(usuario.idRol) }}</td>
+            <td>
+              <span class="badge" [class.badge-activo]="usuario.activo" [class.badge-inactivo]="!usuario.activo">
+                {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="celda-acciones">
+              <button type="button" class="icono-accion icono-ver" title="Ver" (click)="abrirVer(usuario)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button type="button" class="icono-accion icono-editar" title="Editar" (click)="abrirEditar(usuario)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/>
+                </svg>
+              </button>
+              <button *ngIf="usuario.activo" type="button" class="icono-accion icono-eliminar" title="Desactivar" (click)="abrirEliminar(usuario)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18"/>
+                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6"/>
+                  <path d="M14 11v6"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: VER USUARIO ===================== -->
+<div class="modal-overlay" *ngIf="modal() === 'ver' && usuarioSeleccionado() as u">
+  <div class="modal-caja">
+    <div class="modal-encabezado">
+      <h3>Usuario #{{ u.idUsuario }}</h3>
+      <button type="button" class="modal-cerrar" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <div class="modal-cuerpo">
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Nombre</span>
+        <span class="detalle-valor">{{ u.persona?.nombre || '—' }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Correo</span>
+        <span class="detalle-valor">{{ u.persona?.correo || '—' }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Rol ID</span>
+        <span class="detalle-valor">{{ obtenerNombreRol(u.idRol) }}</span>
+      </div>
+      <div class="detalle-fila">
+        <span class="detalle-etiqueta">Estado</span>
+        <span class="badge" [class.badge-activo]="u.activo" [class.badge-inactivo]="!u.activo">
+          {{ u.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="modal-pie">
+      <button type="button" class="btn-secundario" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: CREAR / EDITAR USUARIO ===================== -->
+<div class="modal-overlay" *ngIf="modal() === 'crear' || modal() === 'editar'">
+  <div class="modal-caja">
+    <div class="modal-encabezado">
+      <h3>{{ modal() === 'crear' ? 'Añadir Usuario' : 'Editar Usuario' }}</h3>
+      <button type="button" class="modal-cerrar" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <form class="modal-cuerpo formulario" (ngSubmit)="guardarUsuario()">
+
+      <!-- Campo ID Persona (Solo habilitado al crear) -->
+      <div class="campo" *ngIf="modal() === 'crear'">
+        <label for="idPersona">ID de Persona <span class="obligatorio">*</span></label>
+        <input id="idPersona" name="idPersona" type="number"
+               [(ngModel)]="usuarioForm.idPersona" required placeholder="Ej. 1" />
+      </div>
+
+      <!-- Selector de Rol -->
+      <div class="campo">
+        <label for="idRol">Rol <span class="obligatorio">*</span></label>
+        <select id="idRol" name="idRol" [(ngModel)]="usuarioForm.idRol" required>
+          <option [ngValue]="undefined" disabled>Selecciona un rol</option>
+          <option *ngFor="let rol of listaRoles" [ngValue]="rol.idRol">
+            {{ rol.nombreRol }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="campo">
+        <label for="contrasenaHash">
+          Contraseña {{ modal() === 'editar' ? '(Opcional)' : '' }} <span class="obligatorio" *ngIf="modal() === 'crear'">*</span>
+        </label>
+        <input id="contrasenaHash" name="contrasenaHash" type="password"
+               [(ngModel)]="usuarioForm.contrasenaHash" [required]="modal() === 'crear'" placeholder="********" />
+        <small class="ayuda-campo" *ngIf="modal() === 'editar'">Déjalo en blanco si no deseas cambiar la contraseña.</small>
+      </div>
+
+      <!-- Estado Activo (Solo visible al editar) -->
+      <div class="campo" *ngIf="modal() === 'editar'">
+        <label for="activo">Estado del Usuario</label>
+        <select id="activo" name="activo" [(ngModel)]="usuarioForm.activo">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+
+      <p class="mensaje-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>
+
+      <div class="modal-pie">
+        <button type="button" class="btn-secundario" (click)="cerrarModal()" [disabled]="guardando()">Cancelar</button>
+        <button type="submit" class="btn-primario" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MODAL: DESACTIVAR USUARIO ===================== -->
+<div class="modal-overlay" *ngIf="modal() === 'eliminar' && usuarioSeleccionado() as u">
+  <div class="modal-caja modal-pequena">
+    <div class="modal-encabezado">
+      <h3>Desactivar usuario</h3>
+      <button type="button" class="modal-cerrar" (click)="cerrarModal()">&times;</button>
+    </div>
+
+    <div class="modal-cuerpo">
+      <p>¿Deseas desactivar al usuario <strong>#{{ u.idUsuario }}</strong> ({{ u.persona?.nombre || 'Sin nombre' }})?</p>
+      <p class="texto-secundario">El usuario no se eliminará permanentemente, solo pasará a estado inactivo.</p>
+      <p class="mensaje-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>
+    </div>
+
+    <div class="modal-pie">
+      <button type="button" class="btn-secundario" (click)="cerrarModal()" [disabled]="guardando()">Cancelar</button>
+      <button type="button" class="btn-peligro" (click)="confirmarEliminar()" [disabled]="guardando()">
+        {{ guardando() ? 'Desactivando...' : 'Desactivar' }}
+      </button>
+    </div>
+  </div>
+</div>
