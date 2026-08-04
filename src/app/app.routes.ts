@@ -3,6 +3,7 @@ import { RecetaComponent } from './receta/receta';
 import { DetalleRecetaComponent } from './detalleReceta/detalleReceta';
 import { Login } from './auth/login/login';
 import { Roles } from './roles/roles';
+import { UsuarioComponent } from './usuario/usuario';
 import { Productos } from './productos/productos';
 import { Inicio } from './inicio/inicio';
 import { AdminLayoutLayout } from './shared/admin-layout/admin-layout.layout';
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Inicio },
       { path: 'roles', component: Roles },
+      { path: 'usuarios', component: UsuarioComponent},
       // { path: 'carrito', component: Carrito },
       // { path: 'compras', component: Compras },
       { path: 'productos', component: InventarioProductos },
@@ -49,7 +51,7 @@ export const routes: Routes = [
       { path: 'medicamentos', component: MedicamentosComponent },
       { path: 'clientes', component: Roles },
       { path: 'empleados', component: Roles },
-      { path: 'usuarios', component: Roles },
+      //{ path: 'usuarios', component: Roles },
       { path: 'ventas', component: Ventas },
       { path: 'dashboard-ventas', component: DashboardVentas },
       { path: 'expediente-clinico', component: ExpedienteClinicoComponent}
