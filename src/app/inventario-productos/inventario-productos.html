@@ -11,10 +11,7 @@
       </p>
     </div>
 
-    <button
-      type="button"
-      class="btn-recargar"
-      (click)="cargarInventario()">
+    <button type="button" class="btn-recargar" (click)="cargarInventario()">
 
       Actualizar
     </button>
@@ -22,15 +19,15 @@
   </div>
 
   @if (mensaje()) {
-    <div class="mensaje exito">
-      {{ mensaje() }}
-    </div>
+  <div class="mensaje exito">
+    {{ mensaje() }}
+  </div>
   }
 
   @if (error()) {
-    <div class="mensaje error">
-      {{ error() }}
-    </div>
+  <div class="mensaje error">
+    {{ error() }}
+  </div>
   }
 
   <div class="resumen-grid">
@@ -81,11 +78,7 @@
 
     <div class="barra-herramientas">
 
-      <input
-        type="text"
-        class="buscador"
-        placeholder="Buscar por nombre, SKU o descripción..."
-        [ngModel]="busqueda()"
+      <input type="text" class="buscador" placeholder="Buscar por nombre, SKU o descripción..." [ngModel]="busqueda()"
         (ngModelChange)="cambiarBusqueda($event)">
 
       <div class="contador">
@@ -97,121 +90,115 @@
 
     @if (cargando()) {
 
-      <div class="estado-carga">
-        Consultando inventario...
-      </div>
+    <div class="estado-carga">
+      Consultando inventario...
+    </div>
 
     } @else {
 
-      <div class="tabla-container">
+    <div class="tabla-container">
 
-        <table>
+      <table>
 
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Descripción</th>
-              <th>SKU</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Disponibilidad</th>
-              <th>Actualización</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>SKU</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Disponibilidad</th>
+            <th>Actualización</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
 
-          <tbody>
+        <tbody>
 
-            @for (
-              producto of productosFiltrados();
-              track producto.idProducto
-            ) {
+          @for (
+          producto of productosFiltrados();
+          track producto.idProducto
+          ) {
 
-              <tr>
+          <tr>
 
-                <td class="nombre-producto">
-                  {{ producto.nombre }}
-                </td>
+            <td class="nombre-producto">
+              {{ producto.nombre }}
+            </td>
 
-                <td class="descripcion">
-                  {{
-                    producto.descripcion ||
-                    'Sin descripción'
-                  }}
-                </td>
+            <td class="descripcion">
+              {{
+              producto.descripcion ||
+              'Sin descripción'
+              }}
+            </td>
 
-                <td class="sku">
-                  {{ producto.sku }}
-                </td>
+            <td class="sku">
+              {{ producto.sku }}
+            </td>
 
-                <td>
-                  {{
-                    producto.precio |
-                    currency:'MXN':'symbol':'1.2-2'
-                  }}
-                </td>
+            <td>
+              {{
+              producto.precio |
+              currency:'MXN':'symbol':'1.2-2'
+              }}
+            </td>
 
-                <td class="stock">
-                  {{ producto.stock }}
-                </td>
+            <td class="stock">
+              {{ producto.stock }}
+            </td>
 
-                <td>
-                  <span
-                    [class]="obtenerClaseStock(
+            <td>
+              <span [class]="obtenerClaseStock(
                       producto.stock
                     )">
 
-                    {{
-                      obtenerTextoStock(
-                        producto.stock
-                      )
-                    }}
-                  </span>
-                </td>
+                {{
+                obtenerTextoStock(
+                producto.stock
+                )
+                }}
+              </span>
+            </td>
 
-                <td>
-                  {{
-                    producto.fechaActualizacion
-                      ? (
-                          producto.fechaActualizacion |
-                          date:'dd/MM/yyyy HH:mm'
-                        )
-                      : 'Sin fecha'
-                  }}
-                </td>
+            <td>
+              {{
+              producto.fechaActualizacion
+              ? (
+              producto.fechaActualizacion |
+              date:'dd/MM/yyyy HH:mm'
+              )
+              : 'Sin fecha'
+              }}
+            </td>
 
-                <td>
-                  <button
-                    type="button"
-                    class="btn-editar"
-                    (click)="abrirActualizarStock(
+            <td>
+              <button type="button" class="btn-editar" (click)="abrirActualizarStock(
                       producto
                     )">
 
-                    Actualizar stock
-                  </button>
-                </td>
+                Actualizar stock
+              </button>
+            </td>
 
-              </tr>
+          </tr>
 
-            } @empty {
+          } @empty {
 
-              <tr>
-                <td
-                  colspan="8"
-                  class="tabla-vacia">
+          <tr>
+            <td colspan="8" class="tabla-vacia">
 
-                  No se encontraron productos.
-                </td>
-              </tr>
+              No se encontraron productos.
+            </td>
+          </tr>
 
-            }
+          }
 
-          </tbody>
+        </tbody>
 
-        </table>
+      </table>
 
-      </div>
+    </div>
 
     }
 
@@ -221,97 +208,83 @@
 
 @if (mostrarModal()) {
 
-  <div class="modal-fondo">
+<div class="modal-fondo">
 
-    <div class="modal-contenido">
+  <div class="modal-contenido">
 
-      <div class="modal-encabezado">
+    <div class="modal-encabezado">
 
-        <div>
-          <h2>Actualizar inventario</h2>
+      <div>
+        <h2>Actualizar inventario</h2>
 
-          <p>
-            {{ productoSeleccionado()?.nombre }}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          class="btn-cerrar"
-          (click)="cerrarModal()">
-
-          Cerrar
-        </button>
-
+        <p>
+          {{ productoSeleccionado()?.nombre }}
+        </p>
       </div>
 
-      <div class="detalle-producto">
+      <button type="button" class="btn-cerrar" (click)="cerrarModal()">
 
-        <div>
-          <span>SKU</span>
+        &times;
 
-          <strong>
-            {{ productoSeleccionado()?.sku }}
-          </strong>
-        </div>
+      </button>
 
-        <div>
-          <span>Stock actual</span>
+    </div>
 
-          <strong>
-            {{ productoSeleccionado()?.stock }}
-          </strong>
-        </div>
+    <div class="detalle-producto">
 
+      <div>
+        <span>SKU</span>
+
+        <strong>
+          {{ productoSeleccionado()?.sku }}
+        </strong>
       </div>
 
-      <div class="campo-formulario">
+      <div>
+        <span>Stock actual</span>
 
-        <label for="nuevo-stock">
-          Nuevo stock
-        </label>
-
-        <input
-          id="nuevo-stock"
-          type="number"
-          min="0"
-          [ngModel]="nuevoStock()"
-          (ngModelChange)="cambiarStock($event)">
-
-        <small>
-          Ingresa la cantidad total que quedará
-          disponible en el inventario.
-        </small>
-
-      </div>
-
-      <div class="modal-acciones">
-
-        <button
-          type="button"
-          class="btn-cancelar"
-          (click)="cerrarModal()">
-
-          Cancelar
-        </button>
-
-        <button
-          type="button"
-          class="btn-guardar"
-          [disabled]="actualizando()"
-          (click)="actualizarStock()">
-
-          {{
-            actualizando()
-              ? 'Guardando...'
-              : 'Guardar cambios'
-          }}
-        </button>
-
+        <strong>
+          {{ productoSeleccionado()?.stock }}
+        </strong>
       </div>
 
     </div>
 
+    <div class="campo-formulario">
+
+      <label for="nuevo-stock">
+        Nuevo stock
+      </label>
+
+      <input id="nuevo-stock" type="number" min="0" [ngModel]="nuevoStock()" (ngModelChange)="cambiarStock($event)">
+
+      <small>
+        Ingresa la cantidad total que quedará
+        disponible en el inventario.
+      </small>
+
+    </div>
+
+    <div class="modal-acciones">
+
+      <button type="button" class="btn-cancelar" (click)="cerrarModal()">
+
+        Cancelar
+      </button>
+
+      <button type="button" class="btn-guardar" [disabled]="actualizando()" (click)="actualizarStock()">
+
+        {{
+        actualizando()
+        ? 'Guardando...'
+        : 'Guardar cambios'
+        }}
+      </button>
+
+    </div>
+
   </div>
+
+</div>
 
 }

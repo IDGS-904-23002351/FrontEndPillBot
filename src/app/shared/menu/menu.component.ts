@@ -48,7 +48,7 @@ import { AuthService } from '../../services/auth.service';
 
     .menu {
       flex: 1;
-      overflow: hidden; 
+      overflow: auto; 
     }
 
     .menu ul {
@@ -121,6 +121,9 @@ export class MenuComponent implements OnInit {
 
     this.menuItems = this.authService.getMenuItems();
 
+    console.log('ROL:', this.userRol);
+    console.log('MENU:', this.menuItems);
+
     if (!this.menuItems || this.menuItems.length === 0) {
       const rol = this.userRol.toLowerCase();
 
@@ -132,7 +135,6 @@ export class MenuComponent implements OnInit {
           { label: 'Medicamentos', route: '/medicamentos' },
           { icon: 'inventory', label: 'Inventario', route: '/admin/productos' },
           { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' },
-          { icon: 'analytics', label: 'Dashboard Ventas', route: '/admin/dashboard-ventas' }
 
           // { label: 'Carrito', route: '/carrito' },
           // { label: 'Compras', route: '/compras' }
