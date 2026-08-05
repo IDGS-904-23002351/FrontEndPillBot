@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://6zcgq8h0-7046.usw3.devtunnels.ms'
+  apiUrl: 'https://jww5j8jb-7046.usw3.devtunnels.ms'
 };

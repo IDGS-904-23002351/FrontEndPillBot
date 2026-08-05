@@ -130,8 +130,13 @@ export class MenuComponent implements OnInit {
           { label: 'Usuarios', route: '/usuarios' },
           { label: 'Recetas', route: '/recetas' },
           { label: 'Medicamentos', route: '/medicamentos' },
+          { icon: 'inventory', label: 'Inventario', route: '/admin/productos' },
+          { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' },
+          { icon: 'analytics', label: 'Dashboard Ventas', route: '/admin/dashboard-ventas' }
+
           // { label: 'Carrito', route: '/carrito' },
           // { label: 'Compras', route: '/compras' }
+
         ];
       } else if (rol === 'medico') {
         this.menuItems = [

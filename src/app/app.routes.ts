@@ -42,7 +42,7 @@ export const routes: Routes = [
     data: { roles: ['administrador'] },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Inicio },
+      { path: 'dashboard', component: DashboardVentas },
       { path: 'roles', component: Roles },
       { path: 'usuarios', component: UsuarioComponent},
       { path: 'expediente-clinico', component: ExpedienteClinicoComponent},
