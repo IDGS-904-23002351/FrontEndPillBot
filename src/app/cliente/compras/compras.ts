@@ -11,18 +11,7 @@ import { RouterLink } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
-
-export interface CompraCliente {
-  idVenta: number;
-  nombreProducto: string;
-  cantidad: number;
-  precioUnitario: number;
-  subtotal: number;
-  totalVenta: number;
-  estadoPago?: string | null;
-  estadoEnvio?: string | null;
-  fechaVenta?: string | null;
-}
+import { CompraCliente } from '../../models/compras.model';
 
 @Component({
   selector: 'app-compras',

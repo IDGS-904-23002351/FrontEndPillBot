@@ -67,7 +67,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RolGuard],
     data: { roles: ['cliente'] },
     children: [
-      { path: '', redirectTo: 'carrito', pathMatch: 'full' },
+      { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+      { path: 'inicio', component: Inicio },
       { path: 'carrito', component: Carrito },
       { path: 'compras', component: Compras },
       { path: 'recetas', component: RecetaComponent },

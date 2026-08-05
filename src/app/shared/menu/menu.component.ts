@@ -141,9 +141,9 @@ export class MenuComponent implements OnInit {
         ];
       } else {
         this.menuItems = [
-          { label: 'Inicio', route: '/inicio' },
-          { label: 'Carrito', route: '/carrito' },
-          { label: 'Compras', route: '/compras' }
+          { label: 'Inicio', route: '/cliente/inicio' },
+          { label: 'Carrito', route: '/cliente/carrito' },
+          { label: 'Compras', route: '/cliente/compras' }
         ];
       }
     }

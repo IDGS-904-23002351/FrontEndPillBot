@@ -132,7 +132,7 @@ export class AuthService {
 
       ],
       'cliente': [
-        { icon: 'home', label: 'Inicio', route: '/inicio' },
+        { icon: 'home', label: 'Inicio', route: '/cliente/inicio' },
         { icon: 'shopping_cart', label: 'Carrito', route: '/cliente/carrito' },
         { icon: 'receipt', label: 'Mis Compras', route: '/cliente/compras' },
         { icon: 'medical_services', label: 'Mis Recetas', route: '/cliente/recetas' }
