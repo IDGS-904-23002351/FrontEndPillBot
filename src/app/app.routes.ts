@@ -10,6 +10,7 @@ import { AdminLayoutLayout } from './shared/admin-layout/admin-layout.layout';
 import { ClienteLayout } from './shared/cliente-layout/cliente-layout';
 import { Carrito } from './cliente/carrito/carrito';
 import { Compras } from './cliente/compras/compras';
+import { CategoriasComponent } from './models/categorias.models';
 
 import { AuthGuard } from './guard/auth.guard';
 import { RolGuard } from './guard/rol.guard';
@@ -20,6 +21,7 @@ import { MedicoLayout } from './shared/medico-layout/medico-layout'; // ← corr
 import { Ventas } from './ventas/ventas';
 import { InventarioProductos } from './inventario-productos/inventario-productos';
 import { DashboardVentas } from './dashboard-ventas/dashboard-ventas';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,16 +45,19 @@ export const routes: Routes = [
       { path: 'dashboard', component: Inicio },
       { path: 'roles', component: Roles },
       { path: 'usuarios', component: UsuarioComponent},
+      { path: 'expediente-clinico', component: ExpedienteClinicoComponent},
       // { path: 'carrito', component: Carrito },
       // { path: 'compras', component: Compras },
       { path: 'productos', component: InventarioProductos },
       { path: 'recetas', component: RecetaComponent },
       { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent},
+      { path: 'categorias', component: CategoriasComponent },
       { path: 'medicamentos', component: MedicamentosComponent },
       //{ path: 'usuarios', component: Roles },
       { path: 'ventas', component: Ventas },
-      { path: 'dashboard-ventas', component: DashboardVentas },
-      { path: 'expediente-clinico', component: ExpedienteClinicoComponent}
+      { path: 'dashboard-ventas', component: DashboardVentas }
+      
+    
     ]
   },
 
@@ -98,7 +103,9 @@ export const routes: Routes = [
     {
       path: 'detalle-receta/:idReceta',
       component: DetalleRecetaComponent
-    }
+    },
+    { path: 'categorias', 
+      component: CategoriasComponent },
   ]
 },
 
