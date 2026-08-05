@@ -47,8 +47,8 @@ type ModoModal = 'ninguno' | 'crear' | 'editar';
   selector: 'app-detalle-receta',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './detalleReceta.html',
-  styleUrl: './detalleReceta.css'
+templateUrl: '../detalleReceta/detalleReceta.html',
+styleUrl: '../detalleReceta/detalleReceta.css'
 })
 export class DetalleRecetaComponent implements OnInit {
   private http = inject(HttpClient);

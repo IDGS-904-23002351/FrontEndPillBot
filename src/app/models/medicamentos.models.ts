@@ -45,8 +45,8 @@ type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
   selector: 'app-medicamentos',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './medicamentos.html',
-  styleUrl: './medicamentos.css'
+templateUrl: '../medicamentos/medicamentos.html',
+styleUrl: '../medicamentos/medicamentos.css'
 })
 export class MedicamentosComponent implements OnInit {
   private http = inject(HttpClient);

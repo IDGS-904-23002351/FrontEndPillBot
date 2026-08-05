@@ -21,8 +21,8 @@ type ModoModal = 'ninguno' | 'ver' | 'editar';
   selector: 'app-expediente-clinico',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './expedienteClinico.html',
-  styleUrl: './expedienteClinico.css'
+templateUrl: '../expedienteClinico/expedienteClinico.html',
+styleUrl: '../expedienteClinico/expedienteClinico.css'
 })
 export class ExpedienteClinicoComponent implements OnInit {
   private http = inject(HttpClient);

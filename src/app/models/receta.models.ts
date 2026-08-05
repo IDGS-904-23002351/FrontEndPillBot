@@ -28,8 +28,8 @@ type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
   selector: 'app-receta',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './Receta.html',
-  styleUrl: './receta.css'
+templateUrl: '../receta/Receta.html',
+styleUrl: '../receta/receta.css'
 })
 export class RecetaComponent implements OnInit {
   private http = inject(HttpClient);

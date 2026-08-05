@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { RecetaComponent } from './receta/receta';
-import { DetalleRecetaComponent } from './detalleReceta/detalleReceta';
+import { RecetaComponent } from './models/receta.models';
+import { DetalleRecetaComponent } from './models/detalleReceta.models';
 import { LoginComponent } from './auth/login/login';
 import { Roles } from './roles/roles';
 import { UsuarioComponent } from './usuario/usuario';
@@ -13,8 +13,8 @@ import { Compras } from './cliente/compras/compras';
 
 import { AuthGuard } from './guard/auth.guard';
 import { RolGuard } from './guard/rol.guard';
-import { MedicamentosComponent } from './medicamentos/medicamentos';
-import { ExpedienteClinicoComponent } from './expedienteClinico/expedienteClinico';
+import { MedicamentosComponent } from './models/medicamentos.models';
+import { ExpedienteClinicoComponent } from './models/expedienteClinico.models';
 import { MedicoLayout } from './shared/medico-layout/medico-layout'; // ← corregido
 
 import { Ventas } from './ventas/ventas';
