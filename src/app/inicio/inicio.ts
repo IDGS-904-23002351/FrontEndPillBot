@@ -1,7 +1,7 @@
 
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule,Router  } from '@angular/router';
 import { ProductoService } from '../productos/producto.service';
 import { Producto } from '../../app/models/productos.model';
 
@@ -14,7 +14,7 @@ import { Producto } from '../../app/models/productos.model';
 })
 export class Inicio implements OnInit {
   private productoService = inject(ProductoService);
-
+  private router = inject(Router);
   productos = signal<Producto[]>([]);
   cargando = signal<boolean>(false);
   errorCarga = signal<string>('');
@@ -95,7 +95,8 @@ export class Inicio implements OnInit {
   }
 
   verDetalle(producto: Producto): void {
-    console.log('Ver detalle del modelo IoT:', producto.nombre);
+    
+      this.router.navigate(['/login']);
   }
   
   scrollTo(sectionId: string): void {

@@ -292,3 +292,71 @@
   cursor: pointer;
   padding: 0;
 }
+/* src/app/pages/inicio/inicio.css */
+
+.detail-btn {
+  background: #f1f5f9;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-btn:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.detail-btn:active {
+  transform: translateY(0);
+  background: #cbd5e1;
+}
+
+.detail-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Si quieres un estilo más llamativo (alternativo) */
+.detail-btn-primary {
+  background: #000a4d;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-btn-primary:hover {
+  background: #1a2a6a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 10, 77, 0.25);
+}
+
+/* Si quieres un estilo con borde (alternativo) */
+.detail-btn-outline {
+  background: transparent;
+  border: 1.5px solid #000a4d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #000a4d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-btn-outline:hover {
+  background: #000a4d;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 10, 77, 0.15);
+}
