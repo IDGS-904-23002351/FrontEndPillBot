@@ -15,15 +15,40 @@ export class UsuarioService {
     return this.http.get<ApiResponse<Usuario[]>>(`${this.apiUrl}/usuario`);
   }
 
-  crearUsuario(nuevoUsuario: { idPersona: number; idRol: number; contrasenaHash: string }): Observable<ApiResponse<any>> {
+  crearUsuario(nuevoUsuario: { 
+    nombre: string; 
+    apellidoPaterno: string; 
+    apellidoMaterno?: string; 
+    fechaNacimiento?: string | null; 
+    telefono?: string; 
+    correo: string; 
+    direccion?: string; 
+    idRol: number; 
+    contrasenaHash: string; 
+  }): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/agregarUsuario`, nuevoUsuario);
   }
 
-  actualizarUsuario(id: number, usuarioActualizado: { idRol: number; contrasenaHash?: string | null; activo: boolean }): Observable<ApiResponse<any>> {
+  actualizarUsuario(id: number, usuarioActualizado: { 
+    nombre: string; 
+    apellidoPaterno: string; 
+    apellidoMaterno?: string; 
+    fechaNacimiento?: string | null; 
+    telefono?: string; 
+    correo: string; 
+    direccion?: string; 
+    idRol: number; 
+    contrasenaHash?: string | null; 
+    activo: boolean; 
+  }): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.apiUrl}/modificarUsuario/${id}`, usuarioActualizado);
   }
 
   desactivarUsuario(id: number): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.apiUrl}/desactivar/${id}`, {});
+  }
+
+  obtenerRoles(): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${environment.apiUrl}/api/rol/roles`);
   }
 }

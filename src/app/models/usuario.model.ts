@@ -1,7 +1,13 @@
 export interface Persona {
   idPersona?: number;
   nombre?: string;
+  apellidoPaterno?: string;
+  apellidoMaterno?: string;
+  fechaNacimiento?: string;
+  telefono?: string;
   correo?: string;
+  direccion?: string;
+  fechaRegistro?: string;
 }
 
 export interface Rol {
@@ -17,6 +23,19 @@ export interface Usuario {
   activo: boolean;
   persona?: Persona;
   rol?: Rol;
+}
+
+// Interfaz específica para enviar los datos al registrar un usuario web con persona incluida
+export interface RegistrarUsuarioDto {
+  nombre: string;
+  apellidoPaterno: string;
+  apellidoMaterno?: string;
+  fechaNacimiento?: string;
+  telefono?: string;
+  correo: string;
+  direccion?: string;
+  idRol: number;
+  contrasenaHash: string;
 }
 
 export interface ApiResponse<T> {

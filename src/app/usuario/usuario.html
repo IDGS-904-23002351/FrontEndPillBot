@@ -97,7 +97,7 @@
       </div>
       <div class="detalle-fila">
         <span class="detalle-etiqueta">Rol ID</span>
-        <span class="detalle-valor">{{ obtenerNombreRol(u.idRol) }}</span>
+        <span class="detalle-valor">{{ u.idRol }}</span>
       </div>
       <div class="detalle-fila">
         <span class="detalle-etiqueta">Estado</span>
@@ -123,19 +123,57 @@
 
     <form class="modal-cuerpo formulario" (ngSubmit)="guardarUsuario()">
 
-      <!-- Campo ID Persona (Solo habilitado al crear) -->
-      <div class="campo" *ngIf="modal() === 'crear'">
-        <label for="idPersona">ID de Persona <span class="obligatorio">*</span></label>
-        <input id="idPersona" name="idPersona" type="number"
-               [(ngModel)]="usuarioForm.idPersona" required placeholder="Ej. 1" />
-      </div>
+      <!-- CAMPOS DE LA PERSONA (Solo habilitados al crear) -->
+      <ng-container *ngIf="modal() === 'crear' || modal() === 'editar'">
+        <div class="campo">
+          <label for="nombre">Nombre <span class="obligatorio">*</span></label>
+          <input id="nombre" name="nombre" type="text"
+                 [(ngModel)]="usuarioForm.nombre" required placeholder="Ej. Juan" />
+        </div>
+
+        <div class="campo">
+          <label for="apellidoPaterno">Apellido Paterno <span class="obligatorio">*</span></label>
+          <input id="apellidoPaterno" name="apellidoPaterno" type="text"
+                 [(ngModel)]="usuarioForm.apellidoPaterno" required placeholder="Ej. Pérez" />
+        </div>
+
+        <div class="campo">
+          <label for="apellidoMaterno">Apellido Materno</label>
+          <input id="apellidoMaterno" name="apellidoMaterno" type="text"
+                 [(ngModel)]="usuarioForm.apellidoMaterno" placeholder="Ej. Gómez" />
+        </div>
+
+        <div class="campo">
+          <label for="fechaNacimiento">Fecha de Nacimiento</label>
+          <input id="fechaNacimiento" name="fechaNacimiento" type="date"
+                 [(ngModel)]="usuarioForm.fechaNacimiento" />
+        </div>
+
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" type="text"
+                 [(ngModel)]="usuarioForm.telefono" placeholder="Ej. 4771234567" />
+        </div>
+
+        <div class="campo">
+          <label for="correo">Correo electrónico <span class="obligatorio">*</span></label>
+          <input id="correo" name="correo" type="email"
+                 [(ngModel)]="usuarioForm.correo" required placeholder="correo@ejemplo.com" />
+        </div>
+
+        <div class="campo">
+          <label for="direccion">Dirección</label>
+          <input id="direccion" name="direccion" type="text"
+                 [(ngModel)]="usuarioForm.direccion" placeholder="Calle, número, colonia" />
+        </div>
+      </ng-container>
 
       <!-- Selector de Rol -->
       <div class="campo">
         <label for="idRol">Rol <span class="obligatorio">*</span></label>
         <select id="idRol" name="idRol" [(ngModel)]="usuarioForm.idRol" required>
           <option [ngValue]="undefined" disabled>Selecciona un rol</option>
-          <option *ngFor="let rol of listaRoles" [ngValue]="rol.idRol">
+          <option *ngFor="let rol of listaRoles()" [ngValue]="rol.idRol">
             {{ rol.nombreRol }}
           </option>
         </select>

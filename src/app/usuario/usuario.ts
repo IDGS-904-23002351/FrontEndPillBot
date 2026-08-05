@@ -8,6 +8,11 @@ import { Usuario } from '../models/usuario.model';
 
 type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
 
+export interface Rol {
+  idRol: number;
+  nombreRol: string;
+}
+
 @Component({
   selector: 'app-usuario',
   standalone: true,
@@ -16,70 +21,69 @@ type ModoModal = 'ninguno' | 'ver' | 'crear' | 'editar' | 'eliminar';
   styleUrl: './usuario.css'
 })
 export class UsuarioComponent implements OnInit {
-  private usuarioService = inject(UsuarioService); // 👈 Inyectamos el servicio
+  private usuarioService = inject(UsuarioService);
   private router = inject(Router);
   private authService = inject(AuthService);
 
   usuarios = signal<Usuario[]>([]);
+  listaRoles = signal<Rol[]>([]);
   busqueda = signal('');
   cargando = signal(false);
   errorCarga = signal('');
-
-  listaRoles = [
-    { idRol: 1, nombreRol: 'Administrador' },
-    { idRol: 2, nombreRol: 'Cliente' },
-    { idRol: 3, nombreRol: 'Farmacéutico' }
-  ];
-
   modal = signal<ModoModal>('ninguno');
   usuarioSeleccionado = signal<Usuario | null>(null);
-  usuarioForm: Partial<Usuario> & { idPersona?: number; contrasenaHash?: string } = {
-    idRol: 1,
-    idPersona: undefined,
-    contrasenaHash: '',
-    activo: true
-  };
+  
+  usuarioForm: {
+    idUsuario?: number;
+    idRol?: number;
+    nombre?: string;
+    apellidoPaterno?: string;
+    apellidoMaterno?: string;
+    fechaNacimiento?: string;
+    telefono?: string;
+    correo?: string;
+    direccion?: string;
+    contrasenaHash?: string;
+    activo?: boolean;
+  } = { idRol: undefined, nombre: '', apellidoPaterno: '', apellidoMaterno: '', fechaNacimiento: '', telefono: '', correo: '', direccion: '', contrasenaHash: '', activo: true };
+
   guardando = signal(false);
   errorFormulario = signal('');
 
   usuariosFiltrados = computed(() => {
-    const termino = this.busqueda().trim().toLowerCase();
-    const lista = this.usuarios();
-    if (!termino) return lista;
-    return lista.filter(u =>
-      (u.persona?.correo ?? '').toLowerCase().includes(termino) ||
-      (u.persona?.nombre ?? '').toLowerCase().includes(termino)
-    );
+    const t = this.busqueda().trim().toLowerCase();
+    const l = this.usuarios();
+    return !t ? l : l.filter(u => (u.persona?.correo ?? '').toLowerCase().includes(t) || (u.persona?.nombre ?? '').toLowerCase().includes(t));
   });
 
   totalActivos = computed(() => this.usuarios().filter(u => u.activo).length);
   totalInactivos = computed(() => this.usuarios().filter(u => !u.activo).length);
 
   ngOnInit(): void {
+    this.cargarRoles();
     this.cargarUsuarios();
   }
-
-  // Función para obtener el nombre del rol según su ID
+  
   obtenerNombreRol(idRol: number): string {
-    const rolEncontrado = this.listaRoles.find(r => r.idRol === idRol);
-    return rolEncontrado ? rolEncontrado.nombreRol : `Rol ${idRol}`;
+    return this.listaRoles().find(r => r.idRol === idRol)?.nombreRol ?? `Rol ${idRol}`;
+  }
+
+  cargarRoles(): void {
+    this.usuarioService.obtenerRoles().subscribe({
+      next: (res: any) => this.listaRoles.set(Array.isArray(res) ? res : (res?.success && Array.isArray(res.data) ? res.data : [])),
+      error: (err) => console.error('Error al cargar roles:', err)
+    });
   }
 
   cargarUsuarios(): void {
     this.cargando.set(true);
     this.errorCarga.set('');
-
     this.usuarioService.obtenerUsuarios().subscribe({
-      next: (res) => {
-        if (res && res.success && Array.isArray(res.data)) {
-          this.usuarios.set(res.data);
-        } else {
-          this.usuarios.set([]);
-        }
+      next: (res: any) => {
+        this.usuarios.set(res?.success && Array.isArray(res.data) ? res.data : []);
         this.cargando.set(false);
       },
       error: (err) => {
-        console.error('Error al cargar usuarios:', err);
         this.errorCarga.set(err.error?.message || 'No se pudieron cargar los usuarios.');
         this.cargando.set(false);
       }
@@ -92,12 +96,7 @@ export class UsuarioComponent implements OnInit {
   }
 
   abrirCrear(): void {
-    this.usuarioForm = { 
-      idRol: 1, 
-      idPersona: undefined, 
-      contrasenaHash: '', 
-      activo: true 
-    };
+    this.usuarioForm = { idRol: undefined, nombre: '', apellidoPaterno: '', apellidoMaterno: '', fechaNacimiento: '', telefono: '', correo: '', direccion: '', contrasenaHash: '', activo: true };
     this.errorFormulario.set('');
     this.modal.set('crear');
   }
@@ -106,7 +105,13 @@ export class UsuarioComponent implements OnInit {
     this.usuarioForm = { 
       idUsuario: usuario.idUsuario,
       idRol: usuario.idRol,
-      idPersona: usuario.idPersona,
+      nombre: usuario.persona?.nombre || '',
+      apellidoPaterno: usuario.persona?.apellidoPaterno || '',
+      apellidoMaterno: usuario.persona?.apellidoMaterno || '',
+      fechaNacimiento: usuario.persona?.fechaNacimiento ? usuario.persona.fechaNacimiento.split('T')[0] : '',
+      telefono: usuario.persona?.telefono || '',
+      correo: usuario.persona?.correo || '',
+      direccion: usuario.persona?.direccion || '',
       activo: usuario.activo,
       contrasenaHash: '' 
     };
@@ -128,79 +133,52 @@ export class UsuarioComponent implements OnInit {
 
   guardarUsuario(): void {
     const f = this.usuarioForm;
-
-    if (!f.idRol) {
-      this.errorFormulario.set('El rol es obligatorio.');
-      return;
-    }
-
-    if (this.modal() === 'crear' && (!f.contrasenaHash?.trim() || !f.idPersona)) {
-      this.errorFormulario.set('El ID de persona y la contraseña son obligatorios.');
-      return;
-    }
+    if (!f.idRol) return this.errorFormulario.set('El rol es obligatorio.');
+    if (!f.nombre?.trim() || !f.apellidoPaterno?.trim() || !f.correo?.trim()) return this.errorFormulario.set('Nombre, apellido paterno y correo son obligatorios.');
+    if (this.modal() === 'crear' && !f.contrasenaHash?.trim()) return this.errorFormulario.set('La contraseña es obligatoria para nuevos usuarios.');
 
     this.guardando.set(true);
     this.errorFormulario.set('');
 
-    if (this.modal() === 'crear') {
-      const nuevoUsuario = {
-        idPersona: f.idPersona!,
-        idRol: f.idRol,
-        contrasenaHash: f.contrasenaHash!
-      };
+    const m = this.modal();
+    const datos: any = {
+      nombre: f.nombre!,
+      apellidoPaterno: f.apellidoPaterno!,
+      apellidoMaterno: f.apellidoMaterno || '',
+      fechaNacimiento: f.fechaNacimiento || null,
+      telefono: f.telefono || '',
+      correo: f.correo!,
+      direccion: f.direccion || '',
+      idRol: f.idRol,
+      contrasenaHash: m === 'crear' ? f.contrasenaHash! : (f.contrasenaHash?.trim() ? f.contrasenaHash : null),
+      activo: f.activo ?? true
+    };
 
-      this.usuarioService.crearUsuario(nuevoUsuario).subscribe({
-        next: (res) => {
-          this.guardando.set(false);
-          if (res.success) {
-            this.cerrarModal();
-            this.cargarUsuarios();
-          } else {
-            this.errorFormulario.set(res.message || 'Error al registrar usuario.');
-          }
-        },
-        error: (err) => {
-          this.guardando.set(false);
-          this.errorFormulario.set(err.error?.message || 'Error de conexión.');
-        }
-      });
-      return;
-    }
+    const peticion = m === 'crear' 
+      ? this.usuarioService.crearUsuario(datos) 
+      : this.usuarioService.actualizarUsuario(f.idUsuario!, datos);
 
-    if (this.modal() === 'editar' && f.idUsuario) {
-      const usuarioActualizado = {
-        idRol: f.idRol,
-        contrasenaHash: f.contrasenaHash?.trim() ? f.contrasenaHash : null,
-        activo: f.activo ?? true
-      };
-
-      this.usuarioService.actualizarUsuario(f.idUsuario, usuarioActualizado).subscribe({
-        next: (res) => {
-          this.guardando.set(false);
-          if (res.success) {
-            this.cerrarModal();
-            this.cargarUsuarios();
-          } else {
-            this.errorFormulario.set(res.message || 'Error al actualizar usuario.');
-          }
-        },
-        error: (err) => {
-          this.guardando.set(false);
-          this.errorFormulario.set(err.error?.message || 'Error de conexión.');
-        }
-      });
-    }
+    peticion.subscribe({
+      next: (res: any) => {
+        this.guardando.set(false);
+        this.cerrarModal();
+        this.cargarUsuarios();
+      },
+      error: (err) => {
+        this.guardando.set(false);
+        this.cerrarModal();
+        this.cargarUsuarios();
+      }
+    });
   }
 
   confirmarEliminar(): void {
-    const usuario = this.usuarioSeleccionado();
-    if (!usuario) return;
-
+    const u = this.usuarioSeleccionado();
+    if (!u) return;
     this.guardando.set(true);
     this.errorFormulario.set('');
-
-    this.usuarioService.desactivarUsuario(usuario.idUsuario).subscribe({
-      next: (res) => {
+    this.usuarioService.desactivarUsuario(u.idUsuario).subscribe({
+      next: (res: any) => {
         this.guardando.set(false);
         if (res.success) {
           this.cerrarModal();
