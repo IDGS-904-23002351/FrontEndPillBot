@@ -256,10 +256,18 @@ export class Roles implements OnInit {
       }
     });
   }
+
   private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders({
       'X-Tunnel-Skip-AntiPhishing-Page': 'true',
       'Accept': 'application/json'
     });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
   }
 }

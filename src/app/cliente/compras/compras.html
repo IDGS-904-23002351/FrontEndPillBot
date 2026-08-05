@@ -1,182 +1,179 @@
 <section class="compras-page">
+  <div class="container compras0">
+    <div class="comprasContainer">
+      <div class="encabezado-compras">
 
-  <div class="encabezado-compras">
+        <div>
+          <h1>Mis compras</h1>
 
-    <div>
-      <h1>Mis compras</h1>
+          <p>
+            Consulta los pastilleros adquiridos y el estado
+            actual de cada compra.
+          </p>
+        </div>
 
-      <p>
-        Consulta los pastilleros adquiridos y el estado
-        actual de cada compra.
-      </p>
-    </div>
+        <button type="button" class="btn-recargar" [disabled]="cargando()" (click)="cargarCompras()">
 
-    <button type="button"
-            class="btn-recargar"
-            [disabled]="cargando()"
-            (click)="cargarCompras()">
-
-      {{
-        cargando()
+          {{
+          cargando()
           ? 'Actualizando...'
           : 'Actualizar historial'
-      }}
-    </button>
+          }}
+        </button>
 
-  </div>
+      </div>
 
-  @if (errorCarga()) {
+      @if (errorCarga()) {
 
-  <div class="mensaje error">
-    {{ errorCarga() }}
-  </div>
+      <div class="mensaje error">
+        {{ errorCarga() }}
+      </div>
 
-  }
+      }
 
-  @if (cargando()) {
+      @if (cargando()) {
 
-  <div class="estado-carga">
-    Consultando el historial de compras...
-  </div>
+      <div class="estado-carga">
+        Consultando el historial de compras...
+      </div>
 
-  } @else {
+      } @else {
 
-  <div class="tabla-container">
 
-    <table>
+      <div class="tabla-container">
 
-      <thead>
-        <tr>
-          <th>Folio</th>
-          <th>Fecha</th>
-          <th>Pastillero</th>
-          <th>Cantidad</th>
-          <th>Precio unitario</th>
-          <th>Subtotal</th>
-          <th>Total de venta</th>
-          <th>Estado de pago</th>
-          <th>Estado de envío</th>
-        </tr>
-      </thead>
+        <table>
 
-      <tbody>
+          <thead>
+            <tr>
+              <th>Folio</th>
+              <th>Fecha</th>
+              <th>Pastillero</th>
+              <th>Cantidad</th>
+              <th>Precio unitario</th>
+              <th>Subtotal</th>
+              <th>Total de venta</th>
+              <th>Estado de pago</th>
+              <th>Estado de envío</th>
+            </tr>
+          </thead>
 
-        @for (
-        compra of compras();
-        track
-        compra.idVenta +
-        '-' +
-        compra.nombreProducto
-        ) {
+          <tbody>
 
-        <tr>
+            @for (
+            compra of compras();
+            track
+            compra.idVenta +
+            '-' +
+            compra.nombreProducto
+            ) {
 
-          <td class="folio">
-            #{{ compra.idVenta }}
-          </td>
+            <tr>
 
-          <td>
-            {{ formatearFecha(compra.fechaVenta) }}
-          </td>
+              <td class="folio">
+                #{{ compra.idVenta }}
+              </td>
 
-          <td>
-            {{ compra.nombreProducto }}
-          </td>
+              <td>
+                {{ formatearFecha(compra.fechaVenta) }}
+              </td>
 
-          <td>
-            {{ compra.cantidad }}
-          </td>
+              <td>
+                {{ compra.nombreProducto }}
+              </td>
 
-          <td>
-            {{
-                  compra.precioUnitario |
-                  currency:'MXN':'symbol':'1.2-2'
-            }}
-          </td>
+              <td>
+                {{ compra.cantidad }}
+              </td>
 
-          <td>
-            {{
-                  compra.subtotal |
-                  currency:'MXN':'symbol':'1.2-2'
-            }}
-          </td>
+              <td>
+                {{
+                compra.precioUnitario |
+                currency:'MXN':'symbol':'1.2-2'
+                }}
+              </td>
 
-          <td class="total-venta">
-            {{
-                  compra.totalVenta |
-                  currency:'MXN':'symbol':'1.2-2'
-            }}
-          </td>
+              <td>
+                {{
+                compra.subtotal |
+                currency:'MXN':'symbol':'1.2-2'
+                }}
+              </td>
 
-          <td>
-            <span class="estado"
-                  [ngClass]="
-                    claseEstadoPago(
-                      compra.estadoPago
-                    )
-                  ">
+              <td class="total-venta">
+                {{
+                compra.totalVenta |
+                currency:'MXN':'symbol':'1.2-2'
+                }}
+              </td>
 
-              {{
-                    compra.estadoPago ||
-                    'Pendiente'
-              }}
-            </span>
-          </td>
+              <td>
+                <span class="estado" [ngClass]="
+                          claseEstadoPago(
+                            compra.estadoPago
+                          )
+                        ">
 
-          <td>
-            <span class="estado"
-                  [ngClass]="
-                    claseEstadoEnvio(
-                      compra.estadoEnvio
-                    )
-                  ">
+                  {{
+                  compra.estadoPago ||
+                  'Pendiente'
+                  }}
+                </span>
+              </td>
 
-              {{
-                    compra.estadoEnvio ||
-                    'Pendiente'
-              }}
-            </span>
-          </td>
+              <td>
+                <span class="estado" [ngClass]="
+                          claseEstadoEnvio(
+                            compra.estadoEnvio
+                          )
+                        ">
 
-        </tr>
+                  {{
+                  compra.estadoEnvio ||
+                  'Pendiente'
+                  }}
+                </span>
+              </td>
 
-        } @empty {
+            </tr>
 
-        <tr>
-          <td colspan="9"
-              class="tabla-vacia">
+            } @empty {
 
-            Todavía no tienes compras registradas.
-          </td>
-        </tr>
+            <tr>
+              <td colspan="9" class="tabla-vacia">
 
-        }
+                Todavía no tienes compras registradas.
+              </td>
+            </tr>
 
-      </tbody>
+            }
 
-    </table>
+          </tbody>
 
-  </div>
+        </table>
 
-  @if (compras().length === 0) {
+      </div>
 
-  <div class="sin-compras">
+      @if (compras().length === 0) {
 
-    <h2>No hay compras registradas</h2>
+      <div class="sin-compras">
 
-    <p>
-      Agrega un pastillero al carrito y confirma
-      la compra para verlo en este historial.
-    </p>
+        <h2>No hay compras registradas</h2>
 
-    <a routerLink="/cliente/carrito">
-      Ir al carrito
-    </a>
+        <p>
+          Agrega un pastillero al carrito y confirma
+          la compra para verlo en este historial.
+        </p>
 
-  </div>
+        <a routerLink="/cliente/carrito">
+          Ir al carrito
+        </a>
 
+      </div>
+    
   }
 
   }
-
+</div>
+  </div>
 </section>

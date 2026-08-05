@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { RecetaComponent } from './receta/receta';
 import { DetalleRecetaComponent } from './detalleReceta/detalleReceta';
-import { Login } from './auth/login/login';
+import { LoginComponent } from './auth/login/login';
 import { Roles } from './roles/roles';
 import { UsuarioComponent } from './usuario/usuario';
 import { Productos } from './productos/productos';
@@ -23,7 +23,7 @@ import { DashboardVentas } from './dashboard-ventas/dashboard-ventas';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: Login },
+  { path: 'login', component: LoginComponent },
   { path: 'productos', component: Productos },
   { path: 'inicio', component: Inicio, canActivate: [AuthGuard] },
   { path: 'recetas', component: RecetaComponent, canActivate: [AuthGuard] },
@@ -49,8 +49,6 @@ export const routes: Routes = [
       { path: 'recetas', component: RecetaComponent },
       { path: 'detalle-receta/:idReceta', component: DetalleRecetaComponent},
       { path: 'medicamentos', component: MedicamentosComponent },
-      { path: 'clientes', component: Roles },
-      { path: 'empleados', component: Roles },
       //{ path: 'usuarios', component: Roles },
       { path: 'ventas', component: Ventas },
       { path: 'dashboard-ventas', component: DashboardVentas },

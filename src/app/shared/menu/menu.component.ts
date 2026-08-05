@@ -14,11 +14,10 @@ import { AuthService } from '../../services/auth.service';
       height: 100%;
     }
 
-    /* 🔵 Fondo Azul Marino del estilo "Panel Cliente" */
     .sidebar {
       width: 260px;
       height: 100vh;
-      background-color: #00015c; /* Color azul rey profundo idéntico a la imagen */
+      background-color: #00015c; 
       color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -27,7 +26,6 @@ import { AuthService } from '../../services/auth.service';
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Título principal superior */
     .sidebar-header {
       text-align: center;
       margin-bottom: 5px;
@@ -41,7 +39,6 @@ import { AuthService } from '../../services/auth.service';
       letter-spacing: 0.5px;
     }
 
-    /* Línea divisoria sutil */
     .separator {
       border: none;
       border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -49,10 +46,9 @@ import { AuthService } from '../../services/auth.service';
       width: 100%;
     }
 
-    /* 🚫 Quitamos el scroll de la lista de navegación */
     .menu {
       flex: 1;
-      overflow: hidden; /* Evita que aparezca cualquier barra de scroll */
+      overflow: hidden; 
     }
 
     .menu ul {
@@ -62,10 +58,9 @@ import { AuthService } from '../../services/auth.service';
     }
 
     .menu li {
-      margin-bottom: 12px; /* Separación cómoda entre elementos */
+      margin-bottom: 12px;
     }
 
-    /* Enlaces simples (sin iconos) */
     .menu a {
       display: block;
       color: #ffffff;
@@ -81,7 +76,6 @@ import { AuthService } from '../../services/auth.service';
       background-color: rgba(255, 255, 255, 0.05);
     }
 
-    /* 🔵 Pestaña activa con el tono azul acero translúcido */
     .menu a.active {
       background-color: #2d5f8f; /* El azul acero exacto de la selección en el cliente */
       color: #ffffff;

@@ -4,10 +4,10 @@
     <div class="logo">
       PillBot
     </div>
-    <nav class="landing-nav">
-      <a href="#informacion">Información</a>
-      <a href="#productos">Modelos IoT</a>
-      <a href="#soporte">Soporte</a>
+    <nav class="landing-nav text-aling-center">
+      <button type="button" class="nav-link-btn" (click)="scrollTo('informacion')">Información</button>
+      <button type="button" class="nav-link-btn" (click)="scrollTo('productos')">Modelos IoT</button>
+      
     </nav>
     <div class="auth-buttons">
       <a routerLink="/login" class="btn-login">Iniciar Sesión</a>

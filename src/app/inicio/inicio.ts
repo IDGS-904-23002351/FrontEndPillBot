@@ -65,4 +65,10 @@ export class Inicio implements OnInit {
   verDetalle(producto: Producto): void {
     console.log('Ver detalle del modelo IoT:', producto.nombre);
   }
+  scrollTo(sectionId: string): void {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 }

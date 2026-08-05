@@ -284,3 +284,11 @@
     text-align: center;
   }
 }
+.nav-link-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}

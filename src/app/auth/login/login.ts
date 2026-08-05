@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators'; // 1. IMPORTAR finalize
 import { AuthService } from '../../services/auth.service';
 import {
   LoginCredentials,
   LoginResponse,
   UsuarioLogin,
-  ErrorMessage,
-  Roles,
   HttpStatus,
   ERROR_MESSAGES,
   SUCCESS_MESSAGES,
@@ -20,8 +19,8 @@ import {
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './login.html',
+  styleUrls: ['./login.css']
 })
 export class LoginComponent {
   usuario: UsuarioLogin = {
@@ -38,7 +37,8 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onLogin(): void {
@@ -47,6 +47,7 @@ export class LoginComponent {
     if (!this.validateFields()) {
       return;
     }
+    
     this.loading = true;
 
     const credentials: LoginCredentials = {
@@ -57,20 +58,27 @@ export class LoginComponent {
       detallesNavegador: this.config.deviceInfo.detallesNavegador
     };
 
-    this.authService.login(credentials).subscribe({
-      next: (response: LoginResponse) => this.handleLoginSuccess(response),
-      error: (err) => this.handleLoginError(err)
-    });
+    this.authService.login(credentials)
+      .pipe(
+        finalize(() => {
+          // Se ejecuta SIEMPRE que termine la petición (éxito o error)
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (response: LoginResponse) => this.handleLoginSuccess(response),
+        error: (err) => this.handleLoginError(err)
+      });
   }
+
   private validateFields(): boolean {
-    // Validar campos vacíos
     if (!this.usuario.correo || !this.usuario.contrasena) {
       this.error = ERROR_MESSAGES.REQUIRED_FIELDS;
       this.clearErrorAfterDelay();
       return false;
     }
 
-    // Validar formato de email
     if (!this.isValidEmail(this.usuario.correo)) {
       this.error = ERROR_MESSAGES.INVALID_EMAIL;
       this.clearErrorAfterDelay();
@@ -79,8 +87,8 @@ export class LoginComponent {
 
     return true;
   }
+
   private handleLoginSuccess(response: LoginResponse): void {
-    this.loading = false;
     const rol = response?.data?.nombreRol;
 
     if (rol) {
@@ -88,7 +96,6 @@ export class LoginComponent {
       this.successMessage = SUCCESS_MESSAGES.LOGIN_SUCCESS;
       this.error = '';
 
-      // Redirigir después del delay configurado
       setTimeout(() => {
         this.redirigirPorRol(rol);
       }, this.config.redirectDelay);
@@ -101,15 +108,21 @@ export class LoginComponent {
       }, this.config.redirectDelay + 500);
     }
   }
+
   private handleLoginError(err: any): void {
-    this.loading = false;
     this.showSuccess = false;
+
+    const serverMessage = err.error?.message;
+
     switch (err.status) {
+      case 400:
+        this.error = serverMessage || 'Credenciales incorrectas o usuario inactivo';
+        break;
       case HttpStatus.UNAUTHORIZED:
-        this.error = ERROR_MESSAGES.UNAUTHORIZED;
+        this.error = serverMessage || ERROR_MESSAGES.UNAUTHORIZED;
         break;
       case HttpStatus.NOT_FOUND:
-        this.error = ERROR_MESSAGES.USER_NOT_FOUND;
+        this.error = serverMessage || ERROR_MESSAGES.USER_NOT_FOUND;
         break;
       case HttpStatus.INTERNAL_SERVER_ERROR:
         this.error = ERROR_MESSAGES.SERVER_ERROR;
@@ -118,27 +131,32 @@ export class LoginComponent {
         this.error = ERROR_MESSAGES.CONNECTION_ERROR;
         break;
       default:
-        this.error = err.error?.message || ERROR_MESSAGES.GENERIC_ERROR;
+        this.error = serverMessage || ERROR_MESSAGES.GENERIC_ERROR;
         break;
     }
 
-    console.error('Error en login:', err);
+    console.log('Error manejado. Mensaje asignado:', this.error);
     this.clearErrorAfterDelay();
   }
+
   private redirigirPorRol(rol: string): void {
     const rolKey = rol.toLowerCase();
     const ruta = RUTAS_POR_ROL[rolKey] || '/inicio';
     this.router.navigate([ruta]);
   }
+
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
+
   private clearErrorAfterDelay(): void {
     setTimeout(() => {
       this.error = '';
+      this.cdr.detectChanges();
     }, this.config.errorClearDelay);
   }
+
   private clearStates(): void {
     this.error = '';
     this.showSuccess = false;

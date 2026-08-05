@@ -1,16 +1,17 @@
 <div class="login-container">
   <div class="login-card">
     <h2>Iniciar sesión</h2>
-    
-    <div *ngIf="error" class="alert alert-danger" role="alert">
-      <span class="alert-icon"></span>
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="alert alert-danger" role="alert" style="background-color: #f8d7da; color: #842029; padding: 12px; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #f5c2c7; display: block;">
+        {{ error }}
+      </div>
+    }
 
-    <div *ngIf="showSuccess" class="alert alert-success" role="alert">
-      <span class="alert-icon"></span>
-      {{ successMessage }}
-    </div>
+    @if (showSuccess) {
+      <div class="alert alert-success" role="alert">
+        {{ successMessage }}
+      </div>
+    }
 
     <form class="login-form" (ngSubmit)="onLogin()">
       <div class="form-group">
@@ -40,12 +41,8 @@
       <button type="submit" class="btn-submit" [disabled]="loading">
         <span *ngIf="loading" class="spinner"></span>
         <span *ngIf="loading">Cargando...</span>
-        <span *ngIf="!loading">Iniciar sesión →</span>
+        <span *ngIf="!loading">Iniciar sesión</span>
       </button>
     </form>
-    
-    <div class="forgot-password">
-      <a href="#">¿Olvidaste tu contraseña?</a>
-    </div>
   </div>
 </div>
