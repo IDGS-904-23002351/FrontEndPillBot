@@ -22,15 +22,13 @@ import { MedicoLayout } from './shared/medico-layout/medico-layout';
 import { Ventas } from './ventas/ventas';
 import { InventarioProductos } from './inventario-productos/inventario-productos';
 import { DashboardVentas } from './dashboard-ventas/dashboard-ventas';
-
+import { RegistroUsuarioComponent } from './registrar/registro-usuario';
 export const routes: Routes = [
-  // ✅ RUTAS PÚBLICAS (sin autenticación)
-  { path: '', redirectTo: 'inicio', pathMatch: 'full' }, // Redirige a inicio por defecto
-  { path: 'inicio', component: Inicio }, // ✅ SIN AuthGuard - Pública
-  { path: 'login', component: LoginComponent }, // SIN AuthGuard - Pública
-  { path: 'productos', component: Productos }, // SIN AuthGuard - Pública (opcional)
-  
-  // Rutas protegidas (requieren autenticación)
+  { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+  { path: 'inicio', component: Inicio },
+  { path: 'login', component: LoginComponent }, 
+  { path: 'productos', component: Productos }, 
+  { path: 'registro', component: RegistroUsuarioComponent },
   { path: 'recetas', component: RecetaComponent, canActivate: [AuthGuard] },
   {
     path: 'detalle-receta/:idReceta',
@@ -38,7 +36,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
 
-  // Layout de Administrador (requiere autenticación y rol)
   {
     path: 'admin',
     component: AdminLayoutLayout,
@@ -59,8 +56,6 @@ export const routes: Routes = [
       { path: 'dashboard-ventas', component: DashboardVentas }
     ]
   },
-
-  // Layout de Cliente (requiere autenticación y rol)
   {
     path: 'cliente',
     component: ClienteLayout,
@@ -77,8 +72,6 @@ export const routes: Routes = [
       { path: 'expediente-clinico', component: ExpedienteClinicoComponent }
     ]
   },
-
-  // Layout de Médico (requiere autenticación y rol)
   {
     path: 'medico',
     component: MedicoLayout,
@@ -93,7 +86,5 @@ export const routes: Routes = [
       { path: 'categorias', component: CategoriasComponent }
     ]
   },
-
-  // Ruta por defecto (redirige a inicio)
   { path: '**', redirectTo: 'inicio' }
 ];

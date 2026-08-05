@@ -1,0 +1,209 @@
+<!-- src/app/auth/registro/registro-usuario.html -->
+<div class="registro-container">
+  <div class="registro-card">
+    <div class="registro-header">
+      <h1>Crear Cuenta</h1>
+      <p>Regístrate para comenzar a usar PillBot</p>
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div *ngIf="successMessage" class="alert success">
+      ✅ {{ successMessage }}
+    </div>
+
+    <!-- Mensaje de error del formulario -->
+    <div *ngIf="errorFormulario" class="alert error">
+      ⚠️ {{ errorFormulario }}
+    </div>
+
+    <!-- Error de roles -->
+    <div *ngIf="errorRoles" class="alert error">
+      ⚠️ {{ errorRoles }}
+      <button type="button" (click)="cargarRoles()" class="btn-retry-small">Reintentar</button>
+    </div>
+
+    <form (ngSubmit)="registrar()" #registroForm="ngForm">
+      <!-- NOMBRE Y APELLIDO PATERNO -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input
+            type="text"
+            id="nombre"
+            [(ngModel)]="usuario.nombre"
+            name="nombre"
+            placeholder="Ingresa tu nombre"
+            required
+            [class.error]="enviado && !usuario.nombre.trim()"
+          />
+          <small *ngIf="enviado && !usuario.nombre.trim()" class="error-text">El nombre es obligatorio</small>
+        </div>
+
+        <div class="form-group">
+          <label for="apellidoPaterno">Apellido Paterno *</label>
+          <input
+            type="text"
+            id="apellidoPaterno"
+            [(ngModel)]="usuario.apellidoPaterno"
+            name="apellidoPaterno"
+            placeholder="Ingresa tu apellido paterno"
+            required
+            [class.error]="enviado && !usuario.apellidoPaterno.trim()"
+          />
+          <small *ngIf="enviado && !usuario.apellidoPaterno.trim()" class="error-text">El apellido paterno es obligatorio</small>
+        </div>
+      </div>
+
+      <!-- APELLIDO MATERNO Y FECHA NACIMIENTO -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="apellidoMaterno">Apellido Materno</label>
+          <input
+            type="text"
+            id="apellidoMaterno"
+            [(ngModel)]="usuario.apellidoMaterno"
+            name="apellidoMaterno"
+            placeholder="Ingresa tu apellido materno"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="fechaNacimiento">Fecha de Nacimiento</label>
+          <input
+            type="date"
+            id="fechaNacimiento"
+            [(ngModel)]="usuario.fechaNacimiento"
+            name="fechaNacimiento"
+          />
+        </div>
+      </div>
+
+      <!-- CORREO ELECTRÓNICO -->
+      <div class="form-group">
+        <label for="correo">Correo Electrónico *</label>
+        <input
+          type="email"
+          id="correo"
+          [(ngModel)]="usuario.correo"
+          name="correo"
+          placeholder="ejemplo@correo.com"
+          required
+          [class.error]="enviado && !usuario.correo.trim()"
+        />
+        <small *ngIf="enviado && !usuario.correo.trim()" class="error-text">El correo electrónico es obligatorio</small>
+        <small *ngIf="enviado && usuario.correo.trim() && !usuario.correo.includes('@')" class="error-text">Ingresa un correo válido</small>
+      </div>
+
+      <!-- TELÉFONO Y ROL -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input
+            type="tel"
+            id="telefono"
+            [(ngModel)]="usuario.telefono"
+            name="telefono"
+            placeholder="Ingresa tu teléfono"
+          />
+        </div>
+
+        <!-- SELECT DE ROLES -->
+        <div class="form-group">
+          <label for="idRol">Rol *</label>
+          <select
+            id="idRol"
+            [(ngModel)]="usuario.idRol"
+            name="idRol"
+            required
+            [disabled]="cargandoRoles || roles.length === 0"
+            [class.error]="enviado && roles.length === 0"
+          >
+            <option *ngIf="cargandoRoles" value="">⏳ Cargando roles...</option>
+            <option *ngIf="!cargandoRoles && roles.length === 0" value="">No hay roles disponibles</option>
+            <option *ngFor="let rol of roles" [value]="rol.idRol">
+              {{ rol.nombreRol }}
+            </option>
+          </select>
+          <small *ngIf="cargandoRoles" class="text-muted">⏳ Cargando roles disponibles...</small>
+          <small *ngIf="!cargandoRoles && roles.length > 0" class="text-muted">
+            {{ roles.length }} roles disponibles
+          </small>
+          <small *ngIf="!cargandoRoles && roles.length === 0" class="error-text">
+            No se pudieron cargar los roles
+          </small>
+        </div>
+      </div>
+
+      <!-- DIRECCIÓN -->
+      <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <input
+          type="text"
+          id="direccion"
+          [(ngModel)]="usuario.direccion"
+          name="direccion"
+          placeholder="Ingresa tu dirección"
+        />
+      </div>
+
+      <!-- CONTRASEÑAS -->
+      <div class="form-row">
+        <div class="form-group password-group">
+          <label for="contrasena">Contraseña *</label>
+          <div class="password-wrapper">
+            <input
+              [type]="mostrarContrasena ? 'text' : 'password'"
+              id="contrasena"
+              [(ngModel)]="usuario.contrasenaHash"
+              name="contrasenaHash"
+              placeholder="Mínimo 6 caracteres"
+              required
+              [class.error]="enviado && (!usuario.contrasenaHash || usuario.contrasenaHash.length < 6)"
+            />
+            <button type="button" class="toggle-password" (click)="toggleMostrarContrasena()">
+              {{ mostrarContrasena ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <small *ngIf="enviado && (!usuario.contrasenaHash || usuario.contrasenaHash.length < 6)" class="error-text">
+            La contraseña debe tener al menos 6 caracteres
+          </small>
+        </div>
+
+        <div class="form-group password-group">
+          <label for="contrasenaConfirmacion">Confirmar Contraseña *</label>
+          <div class="password-wrapper">
+            <input
+              [type]="mostrarConfirmacion ? 'text' : 'password'"
+              id="contrasenaConfirmacion"
+              [(ngModel)]="contrasenaConfirmacion"
+              name="contrasenaConfirmacion"
+              placeholder="Confirma tu contraseña"
+              required
+              [class.error]="enviado && contrasenaConfirmacion !== usuario.contrasenaHash"
+            />
+            <button type="button" class="toggle-password" (click)="toggleMostrarConfirmacion()">
+              {{ mostrarConfirmacion ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <small *ngIf="enviado && contrasenaConfirmacion !== usuario.contrasenaHash" class="error-text">
+            Las contraseñas no coinciden
+          </small>
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="form-actions">
+        <button type="submit" class="btn-registrar" [disabled]="cargando || cargandoRoles">
+          {{ cargando ? '⏳ Registrando...' : '📝 Registrarse' }}
+        </button>
+        <button type="button" class="btn-cancelar" (click)="irALogin()">
+          Cancelar
+        </button>
+      </div>
+
+      <div class="registro-footer">
+        <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+      </div>
+    </form>
+  </div>
+</div>
