@@ -71,12 +71,12 @@
           <td class="id-cell">#{{ producto.idProducto }}</td>
           <td class="image-cell">
             <img
-              *ngIf="producto.foto && producto.foto.length > 100"
-              [src]="producto.foto"
+              *ngIf="producto.foto && producto.foto.trim() !== ''"
+              [src]="obtenerImagenUrl(producto.foto)"
               [alt]="producto.nombre"
               class="product-thumbnail"
             />
-            <div *ngIf="!producto.foto || producto.foto.length <= 100" class="thumbnail-placeholder">
+            <div *ngIf="!producto.foto || producto.foto.trim() === ''" class="thumbnail-placeholder">
               💊
             </div>
           </td>
@@ -123,12 +123,12 @@
           <label>Imagen</label>
           <div class="detail-image">
             <img
-              *ngIf="productoSeleccionado.foto && productoSeleccionado.foto.length > 100"
-              [src]="productoSeleccionado.foto"
+              *ngIf="productoSeleccionado.foto && productoSeleccionado.foto.trim() !== ''"
+              [src]="obtenerImagenUrl(productoSeleccionado.foto)"
               [alt]="productoSeleccionado.nombre"
               class="detail-img"
             />
-            <div *ngIf="!productoSeleccionado.foto || productoSeleccionado.foto.length <= 100" class="detail-no-image">
+            <div *ngIf="!productoSeleccionado.foto || productoSeleccionado.foto.trim() === ''" class="detail-no-image">
               💊
             </div>
           </div>

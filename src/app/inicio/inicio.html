@@ -1,4 +1,3 @@
-<!-- src/app/pages/inicio/inicio.html -->
 <div class="landing-page">
   <header class="landing-navbar">
     <div class="logo">
@@ -7,7 +6,6 @@
     <nav class="landing-nav text-aling-center">
       <button type="button" class="nav-link-btn" (click)="scrollTo('informacion')">Información</button>
       <button type="button" class="nav-link-btn" (click)="scrollTo('productos')">Modelos IoT</button>
-      
     </nav>
     <div class="auth-buttons">
       <a routerLink="/login" class="btn-login">Iniciar Sesión</a>
@@ -17,7 +15,6 @@
 
   <main class="landing-content">
     
-    <!-- BANNER -->
     <section class="welcome-banner" id="informacion">
       <div class="banner-content">
         <span class="badge">IoT 2026</span>
@@ -31,11 +28,8 @@
         <a href="#productos" class="banner-btn">Ver Modelos IoT</a>
       </div>
     </section>
-
-    <!-- SECCIÓN DE PRODUCTOS / MODELOS IoT -->
     <section id="productos" style="margin-bottom: 40px;">
       
-      <!-- Encabezado -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
         <div>
           <h2 style="font-size: 2rem; color: #000a4d; font-weight: 700; margin: 0;">Modelos IoT Disponibles</h2>
@@ -52,42 +46,41 @@
         </div>
       </div>
 
-      <!-- Loading -->
       <div *ngIf="cargando()" style="text-align: center; padding: 60px 20px;">
         <div style="width: 50px; height: 50px; border: 4px solid #eef0f5; border-top: 4px solid #000a4d; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
         <p style="color: #5f6d7e;">Cargando modelos IoT...</p>
       </div>
 
-      <!-- Error -->
       <div *ngIf="errorCarga() && !cargando()" style="text-align: center; padding: 40px 20px; color: #dc2626;">
         <p>{{ errorCarga() }}</p>
         <button (click)="cargarProductos()" style="background: #000a4d; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 12px;">Reintentar</button>
       </div>
 
-      <!-- Grid de Productos -->
       <div *ngIf="!cargando() && !errorCarga()" class="cards-grid">
         <div *ngFor="let producto of productos()" class="info-card" style="position: relative; padding: 0; overflow: hidden;">
           
-          <!-- Badge IoT -->
           <div style="position: absolute; top: 12px; left: 12px; background: linear-gradient(135deg, #000a4d, #1e3c72); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
             IoT
           </div>
 
-          <!-- Imagen -->
-          <div style="background: linear-gradient(135deg, #f8fafc, #eef2ff); height: 180px; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative;">
+          <div style="background: linear-gradient(135deg, #f8fafc, #eef2ff); height: 200px; display: flex; align-items: center; justify-content: center; padding: 0; position: relative; overflow: hidden;">
             
-            <!-- Badge de categoría -->
             <div style="position: absolute; top: 12px; right: 12px; color: #ffffff; font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 5;" 
                  [style.background]="producto.precio > 1000 ? 'linear-gradient(135deg, #f59e0b, #d97706)' : producto.precio > 500 ? 'linear-gradient(135deg, #3b82f6, #2563eb)' : '#000a4d'">
               {{ producto.precio > 1000 ? 'Premium' : producto.precio > 500 ? 'Avanzado' : 'Básico' }}
             </div>
             
-            <!-- Icono del producto -->
-            <div style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
-              <span style="font-size: 3.5rem; font-weight: 700; color: #000a4d;">D</span>
+            <img 
+              *ngIf="producto.foto && producto.foto.trim() !== ''" 
+              [src]="obtenerImagenUrl(producto.foto)" 
+              [alt]="producto.nombre"
+              style="width: 80%; height: 80%; object-fit: contain;"
+            />
+            
+            <div *ngIf="!producto.foto || producto.foto.trim() === ''" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8fafc, #eef2ff);">
+              <span style="font-size: 4rem; font-weight: 700; color: #000a4d; opacity: 0.3;">D</span>
             </div>
 
-            <!-- Estado -->
             <div style="position: absolute; bottom: 12px; right: 12px; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; backdrop-filter: blur(4px); z-index: 5;" 
                  [style.background]="producto.activo ? 'rgba(34, 197, 94, 0.9)' : 'rgba(148, 163, 184, 0.9)'" 
                  [style.color]="'white'">
@@ -95,7 +88,6 @@
             </div>
           </div>
 
-          <!-- Información -->
           <div style="padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
               <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">{{ producto.sku }}</span>
@@ -104,28 +96,16 @@
             <h3 style="font-size: 1.1rem; color: #000a4d; font-weight: 600; margin: 4px 0 8px;">{{ producto.nombre }}</h3>
             <p style="font-size: 0.9rem; color: #5f6d7e; line-height: 1.5; margin-bottom: 12px; min-height: 40px;">{{ truncarTexto(producto.descripcion, 80) }}</p>
             
-            <!-- Especificaciones -->
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
-              <span style="font-size: 0.7rem; color: #475569; background: #f1f5f9; padding: 4px 10px; border-radius: 12px; font-weight: 500;">Conectividad IoT</span>
-              <span style="font-size: 0.7rem; color: #475569; background: #f1f5f9; padding: 4px 10px; border-radius: 12px; font-weight: 500;">Monitoreo remoto</span>
-              <span style="font-size: 0.7rem; color: #475569; background: #f1f5f9; padding: 4px 10px; border-radius: 12px; font-weight: 500;">Bajo consumo</span>
-            </div>
-            
-            <!-- Precio y acción -->
             <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #eef0f5;">
               <div style="display: flex; align-items: baseline; gap: 4px;">
                 <span style="font-size: 1.3rem; font-weight: 700; color: #000a4d;">{{ formatearPrecio(producto.precio) }}</span>
                 <span style="font-size: 0.8rem; color: #94a3b8;">MXN</span>
               </div>
-              <button (click)="verDetalle(producto)" style="background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; color: #1e293b; cursor: pointer; transition: all 0.2s;">
-                Ver detalles
-              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Estado vacío -->
       <div *ngIf="!cargando() && !errorCarga() && productos().length === 0" style="text-align: center; padding: 40px 20px; color: #5f6d7e;">
         <p>No hay modelos IoT disponibles en este momento.</p>
       </div>
