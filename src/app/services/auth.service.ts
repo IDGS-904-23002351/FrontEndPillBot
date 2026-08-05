@@ -124,7 +124,6 @@ export class AuthService {
         { icon: 'admin_panel_settings', label: 'Roles', route: '/admin/roles' },
         { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' },
         { icon: 'inventory', label: 'Inventario', route: '/admin/productos' },
-        { icon: 'analytics', label: 'Dashboard Ventas', route: '/admin/dashboard-ventas' },
       ],
       'medico': [
         { icon: 'groups', label: 'Pacientes', route: '/medico/expediente-clinico' },

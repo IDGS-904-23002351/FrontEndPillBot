@@ -11,27 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
-
-export interface InventarioProducto {
-  idInventarioProd: number;
-  idProducto: number;
-  nombre: string;
-  descripcion?: string | null;
-  precio: number;
-  sku: string;
-  stock: number;
-  fechaActualizacion?: string | null;
-  activo: boolean;
-}
-
-export interface InventarioProductoActualizar {
-  idProducto: number;
-  stock: number;
-}
-
-export interface RespuestaMensaje {
-  mensaje: string;
-}
+import { InventarioProducto, InventarioProductoActualizar, RespuestaMensaje } from '../models/inventario.models';
 
 @Component({
   selector: 'app-inventario-productos',
