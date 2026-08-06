@@ -157,11 +157,13 @@
         </select>
       </div>
 
-      <div class="campo">
-        <label for="nombreMedico">Nombre del médico <span class="obligatorio">*</span></label>
-        <input id="nombreMedico" name="nombreMedico" type="text" maxlength="150"
-               [(ngModel)]="recetaForm.nombreMedico" required placeholder="Dr. Juan Pérez" />
-      </div>
+   <div class="campo">
+  <label for="nombreMedico">Nombre del médico <span class="obligatorio">*</span></label>
+  <input id="nombreMedico" name="nombreMedico" type="text" maxlength="150"
+         [(ngModel)]="recetaForm.nombreMedico" required
+         [readonly]="esMedico()"
+         placeholder="Dr. Juan Pérez" />
+</div>
 
       <div class="campo">
         <label for="cedulaProfesional">Cédula profesional <span class="obligatorio">*</span></label>

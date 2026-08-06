@@ -91,6 +91,22 @@ export class AuthService {
     return '';
   }
 
+  guardarCedulaProfesional(cedula: string): void {
+  if (this.isBrowser) {
+    const idUsuario = this.getIdUsuario();
+    if (idUsuario) {
+      localStorage.setItem(`cedulaProfesional_${idUsuario}`, cedula);
+    }
+  }
+}
+
+getCedulaProfesionalGuardada(): string {
+  if (!this.isBrowser) return '';
+  const idUsuario = this.getIdUsuario();
+  if (!idUsuario) return '';
+  return localStorage.getItem(`cedulaProfesional_${idUsuario}`) || '';
+}
+
   isAuthenticated(): boolean {
     if (!this.isBrowser) return false;
     return !!localStorage.getItem('user') && !!localStorage.getItem('rol');

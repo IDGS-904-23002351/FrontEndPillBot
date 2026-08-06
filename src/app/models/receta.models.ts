@@ -197,23 +197,26 @@ export class RecetaComponent implements OnInit {
     this.modal.set('ver');
   }
 
-  abrirCrear(): void {
-    this.recetaForm = {
-      idCliente: undefined,
-      nombreMedico: '',
-      cedulaProfesional: '',
-      padecimiento: '',
-      observaciones: ''
-    };
-    this.errorFormulario.set('');
-    this.modal.set('crear');
-  }
+abrirCrear(): void {
+  this.recetaForm = {
+    idCliente: undefined,
+    nombreMedico: this.esMedico() ? this.authService.getUserName() : '',
+    cedulaProfesional: this.esMedico() ? this.authService.getCedulaProfesionalGuardada() : '',
+    padecimiento: '',
+    observaciones: ''
+  };
+  this.errorFormulario.set('');
+  this.modal.set('crear');
+}
 
-  abrirEditar(receta: Receta): void {
-    this.recetaForm = { ...receta };
-    this.errorFormulario.set('');
-    this.modal.set('editar');
+ abrirEditar(receta: Receta): void {
+  this.recetaForm = { ...receta };
+  if (this.esMedico()) {
+    this.recetaForm.nombreMedico = this.authService.getUserName();
   }
+  this.errorFormulario.set('');
+  this.modal.set('editar');
+}
 
   abrirEliminar(receta: Receta): void {
     this.recetaSeleccionada.set(receta);
@@ -239,30 +242,33 @@ export class RecetaComponent implements OnInit {
     this.guardando.set(true);
     this.errorFormulario.set('');
 
-    if (this.modal() === 'crear') {
-      const nuevaReceta = {
-        idCliente: f.idCliente,
-        nombreMedico: f.nombreMedico,
-        cedulaProfesional: f.cedulaProfesional,
-        fechaEmision: null, // el backend la calcula automáticamente
-        observaciones: f.observaciones?.trim() ? f.observaciones : null,
-        padecimiento: f.padecimiento,
-        activo: true
-      };
+  if (this.modal() === 'crear') {
+  const nuevaReceta = {
+    idCliente: f.idCliente,
+    nombreMedico: f.nombreMedico,
+    cedulaProfesional: f.cedulaProfesional,
+    fechaEmision: null,
+    observaciones: f.observaciones?.trim() ? f.observaciones : null,
+    padecimiento: f.padecimiento,
+    activo: true
+  };
 
-      this.http.post(this.apiRecetas, nuevaReceta).subscribe({
-        next: () => {
-          this.guardando.set(false);
-          this.cerrarModal();
-          this.cargarRecetas();
-        },
-        error: () => {
-          this.guardando.set(false);
-          this.errorFormulario.set('No se pudo registrar la receta.');
-        }
-      });
-      return;
+  this.http.post(this.apiRecetas, nuevaReceta).subscribe({
+    next: () => {
+      if (this.esMedico() && f.cedulaProfesional) {
+        this.authService.guardarCedulaProfesional(f.cedulaProfesional);
+      }
+      this.guardando.set(false);
+      this.cerrarModal();
+      this.cargarRecetas();
+    },
+    error: () => {
+      this.guardando.set(false);
+      this.errorFormulario.set('No se pudo registrar la receta.');
     }
+  });
+  return;
+}
 
     if (this.modal() === 'editar' && f.idReceta) {
       const recetaActualizada = {
