@@ -1,48 +1,85 @@
-<div class="login-container">
-  <div class="login-card">
-    <h2>Iniciar sesión</h2>
-    @if (error) {
-      <div class="alert alert-danger" role="alert" style="background-color: #f8d7da; color: #842029; padding: 12px; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #f5c2c7; display: block;">
-        {{ error }}
+<div class="login-wrapper">
+  <div class="login-container">
+    <div class="login-brand">
+      <div class="brand-content">
+        <div class="brand-logo">
+          <img src="img/logo.png" alt="Logo">
+        </div>
       </div>
-    }
+    </div>
+    <div class="login-form-container">
+      <div class="form-wrapper">
+        <div class="form-header">
+          <h2>Iniciar sesión</h2>
+          <p class="subtitle">Ingresa tus credenciales</p>
+        </div><br>
+        @if (error) {
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ error }}</span>
+          </div>
+        }
+        @if (showSuccess) {
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ successMessage }}</span>
+          </div>
+        }
 
-    @if (showSuccess) {
-      <div class="alert alert-success" role="alert">
-        {{ successMessage }}
-      </div>
-    }
+        <form (ngSubmit)="onLogin()" class="login-form">
+          <div class="form-group">
+            <label for="correo">
+              Correo electrónico
+            </label>
+            <input 
+              type="email" 
+              id="correo"
+              [(ngModel)]="usuario.correo" 
+              name="correo" 
+              placeholder="tucorreo@ejemplo.com" 
+              required 
+              [disabled]="loading"
+              class="form-control"
+            />
+          </div><br>
 
-    <form class="login-form" (ngSubmit)="onLogin()">
-      <div class="form-group">
-        <input 
-          type="email" 
-          [(ngModel)]="usuario.correo" 
-          name="correo" 
-          placeholder="Correo electrónico" 
-          required 
-          [disabled]="loading"
-          class="form-control"
-        />
+          <div class="form-group">
+            <label for="contrasena">
+              Contraseña
+            </label>
+            <div class="password-wrapper">
+              <input 
+                [type]="passwordVisible ? 'text' : 'password'"
+                id="contrasena"
+                [(ngModel)]="usuario.contrasena" 
+                name="contrasena" 
+                placeholder="••••••••" 
+                required 
+                [disabled]="loading"
+                class="form-control"
+              />
+              <button 
+                type="button" 
+                class="toggle-password" 
+                (click)="togglePasswordVisibility()"
+                [disabled]="loading"
+              >
+                <i [class]="passwordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+          </div><br>
+
+          <button type="submit" class="btn-submit" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner"></span>
+              <span>Iniciando sesión...</span>
+            } @else {
+              <span>Ingresar</span>
+              <i class="fas fa-arrow-right"></i>
+            }
+          </button>
+        </form>
       </div>
-      
-      <div class="form-group">
-        <input 
-          type="password" 
-          [(ngModel)]="usuario.contrasena" 
-          name="contrasena" 
-          placeholder="Contraseña" 
-          required 
-          [disabled]="loading"
-          class="form-control"
-        />
-      </div>
-      
-      <button type="submit" class="btn-submit" [disabled]="loading">
-        <span *ngIf="loading" class="spinner"></span>
-        <span *ngIf="loading">Cargando...</span>
-        <span *ngIf="!loading">Iniciar sesión</span>
-      </button>
-    </form>
+    </div>
   </div>
-</div>
+</div>  

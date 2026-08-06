@@ -23,6 +23,8 @@ import {
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
+  passwordVisible = false;
+  rememberMe = false;
   usuario: UsuarioLogin = {
     correo: '',
     contrasena: ''
@@ -40,6 +42,10 @@ export class LoginComponent {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+  }
 
   onLogin(): void {
     this.clearStates();
@@ -73,14 +79,14 @@ export class LoginComponent {
 
   private validateFields(): boolean {
     if (!this.usuario.correo || !this.usuario.contrasena) {
-      this.error = ERROR_MESSAGES.REQUIRED_FIELDS;
-      this.clearErrorAfterDelay();
+      this.error = 'Por favor, ingresa tu correo y contraseña.';
+      this.cdr.detectChanges();
       return false;
     }
 
     if (!this.isValidEmail(this.usuario.correo)) {
-      this.error = ERROR_MESSAGES.INVALID_EMAIL;
-      this.clearErrorAfterDelay();
+      this.error = 'Por favor, ingresa un correo electrónico válido.';
+      this.cdr.detectChanges();
       return false;
     }
 
@@ -92,15 +98,16 @@ export class LoginComponent {
 
     if (rol) {
       this.showSuccess = true;
-      this.successMessage = SUCCESS_MESSAGES.LOGIN_SUCCESS;
+      this.successMessage = '¡Bienvenido! Inicio de sesión exitoso.';
       this.error = '';
+      this.cdr.detectChanges();
 
       setTimeout(() => {
         this.redirigirPorRol(rol);
       }, this.config.redirectDelay);
     } else {
-      this.error = ERROR_MESSAGES.ROLE_NOT_DETERMINED;
-      this.clearErrorAfterDelay();
+      this.error = 'No se pudo determinar el rol del usuario.';
+      this.cdr.detectChanges();
       
       setTimeout(() => {
         this.router.navigate(['/inicio']);
@@ -110,32 +117,33 @@ export class LoginComponent {
 
   private handleLoginError(err: any): void {
     this.showSuccess = false;
+    this.cdr.detectChanges();
 
     const serverMessage = err.error?.message;
 
     switch (err.status) {
       case 400:
-        this.error = serverMessage || 'Credenciales incorrectas o usuario inactivo';
+        this.error = serverMessage || 'Credenciales incorrectas o usuario inactivo.';
         break;
       case HttpStatus.UNAUTHORIZED:
-        this.error = serverMessage || ERROR_MESSAGES.UNAUTHORIZED;
+        this.error = serverMessage || 'Usuario o contraseña incorrectos.';
         break;
       case HttpStatus.NOT_FOUND:
-        this.error = serverMessage || ERROR_MESSAGES.USER_NOT_FOUND;
+        this.error = serverMessage || 'Usuario no encontrado.';
         break;
       case HttpStatus.INTERNAL_SERVER_ERROR:
-        this.error = ERROR_MESSAGES.SERVER_ERROR;
+        this.error = 'Error en el servidor. Por favor, intenta más tarde.';
         break;
       case HttpStatus.CONNECTION_ERROR:
-        this.error = ERROR_MESSAGES.CONNECTION_ERROR;
+        this.error = 'Error de conexión. Verifica tu internet.';
         break;
       default:
-        this.error = serverMessage || ERROR_MESSAGES.GENERIC_ERROR;
+        this.error = serverMessage || 'Ocurrió un error al iniciar sesión.';
         break;
     }
 
-    console.log('Error manejado. Mensaje asignado:', this.error);
-    this.clearErrorAfterDelay();
+    this.cdr.detectChanges();
+    console.log('Error:', this.error);
   }
 
   private redirigirPorRol(rol: string): void {
@@ -149,16 +157,10 @@ export class LoginComponent {
     return emailRegex.test(email);
   }
 
-  private clearErrorAfterDelay(): void {
-    setTimeout(() => {
-      this.error = '';
-      this.cdr.detectChanges();
-    }, this.config.errorClearDelay);
-  }
-
   private clearStates(): void {
     this.error = '';
     this.showSuccess = false;
     this.successMessage = '';
+    this.cdr.detectChanges();
   }
 }
