@@ -54,17 +54,24 @@ export class RecetaComponent implements OnInit {
   guardando = signal(false);
   errorFormulario = signal('');
 
-  recetasFiltradas = computed(() => {
-    const termino = this.busqueda().trim().toLowerCase();
-    const lista = this.recetas();
-    if (!termino) return lista;
-    return lista.filter(r =>
-      (r.nombreMedico ?? '').toLowerCase().includes(termino) ||
-      (r.padecimiento ?? '').toLowerCase().includes(termino) ||
-      (r.cedulaProfesional ?? '').toLowerCase().includes(termino) ||
-      this.nombreCliente(r.idCliente).toLowerCase().includes(termino)
-    );
-  });
+recetasFiltradas = computed(() => {
+  const termino = this.busqueda().trim().toLowerCase();
+  let lista = this.recetas();
+
+  // Si es médico, solo mostrar las recetas que él mismo registró
+  if (this.esMedico()) {
+    const nombreUsuario = this.authService.getUserName().trim().toLowerCase();
+    lista = lista.filter(r => (r.nombreMedico ?? '').trim().toLowerCase() === nombreUsuario);
+  }
+
+  if (!termino) return lista;
+  return lista.filter(r =>
+    (r.nombreMedico ?? '').toLowerCase().includes(termino) ||
+    (r.padecimiento ?? '').toLowerCase().includes(termino) ||
+    (r.cedulaProfesional ?? '').toLowerCase().includes(termino) ||
+    this.nombreCliente(r.idCliente).toLowerCase().includes(termino)
+  );
+});
 
   ngOnInit(): void {
     this.cargarRecetas();
