@@ -2,6 +2,8 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../services/auth.service'; // ← ajusta la ruta si es distinta
+
 
 export interface CatalogoMedicamento {
   idMedicamento: number;
@@ -55,6 +57,7 @@ export class MedicamentosComponent implements OnInit {
   private readonly apiCategorias = 'https://localhost:7046/api/categorias';
   private readonly apiPresentaciones = 'https://localhost:7046/api/presentaciones';
   private readonly apiUnidadesMedida = 'https://localhost:7046/api/unidadesMedida';
+  private auth = inject(AuthService);
 
   medicamentos = signal<CatalogoMedicamento[]>([]);
   categorias = signal<Categoria[]>([]);
@@ -72,15 +75,22 @@ export class MedicamentosComponent implements OnInit {
   errorFormulario = signal('');
   cargandoDetalle = signal(false);
 
-  medicamentosFiltrados = computed(() => {
-    const termino = this.busqueda().trim().toLowerCase();
-    const lista = this.medicamentos();
-    if (!termino) return lista;
-    return lista.filter(m =>
-      (m.nombreComercial ?? '').toLowerCase().includes(termino) ||
-      (m.principioActivo ?? '').toLowerCase().includes(termino)
-    );
-  });
+medicamentosFiltrados = computed(() => {
+  const termino = this.busqueda().trim().toLowerCase();
+  let lista = this.medicamentos();
+
+  // CAMBIO: si es médico, solo ve los que él registró
+  if (this.auth.hasRole('medico')) {
+    const propios = this.auth.getMedicamentosPropios();
+    lista = lista.filter(m => propios.includes(m.idMedicamento));
+  }
+
+  if (!termino) return lista;
+  return lista.filter(m =>
+    (m.nombreComercial ?? '').toLowerCase().includes(termino) ||
+    (m.principioActivo ?? '').toLowerCase().includes(termino)
+  );
+});
 
   ngOnInit(): void {
     this.cargarMedicamentos();
@@ -209,17 +219,21 @@ export class MedicamentosComponent implements OnInit {
         requiereReceta: !!f.requiereReceta
       };
 
-      this.http.post(this.apiMedicamentos, nuevoMedicamento).subscribe({
-        next: () => {
-          this.guardando.set(false);
-          this.cerrarModal();
-          this.cargarMedicamentos();
-        },
-        error: () => {
-          this.guardando.set(false);
-          this.errorFormulario.set('No se pudo registrar el medicamento.');
-        }
-      });
+ this.http.post<{ mensaje: string; idMedicamento: number }>(this.apiMedicamentos, nuevoMedicamento).subscribe({
+  next: (respuesta) => {
+    // CAMBIO: guardamos el ID como "propio" del médico logueado
+    if (respuesta?.idMedicamento) {
+      this.auth.guardarMedicamentoPropio(respuesta.idMedicamento);
+    }
+    this.guardando.set(false);
+    this.cerrarModal();
+    this.cargarMedicamentos();
+  },
+  error: () => {
+    this.guardando.set(false);
+    this.errorFormulario.set('No se pudo registrar el medicamento.');
+  }
+});
       return;
     }
 

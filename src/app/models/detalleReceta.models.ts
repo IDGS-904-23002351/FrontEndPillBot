@@ -121,12 +121,22 @@ export class DetalleRecetaComponent implements OnInit {
     });
   }
 
-  cargarMedicamentos(): void {
-    this.http.get<Medicamento[]>(this.apiMedicamentos).subscribe({
-      next: (data) => this.medicamentos.set(data ?? []),
-      error: () => this.medicamentos.set([])
-    });
-  }
+cargarMedicamentos(): void {
+  this.http.get<Medicamento[]>(this.apiMedicamentos).subscribe({
+    next: (data) => {
+      let lista = data ?? [];
+
+      // CAMBIO: si es médico, solo puede elegir los medicamentos que él registró
+      if (this.esMedico()) {
+        const propios = this.authService.getMedicamentosPropios();
+        lista = lista.filter(m => propios.includes(m.idMedicamento));
+      }
+
+      this.medicamentos.set(lista);
+    },
+    error: () => this.medicamentos.set([])
+  });
+}
 
   nombreMedicamento(idMedicamento?: number): string {
     if (!idMedicamento) return '—';

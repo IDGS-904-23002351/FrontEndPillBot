@@ -107,6 +107,28 @@ getCedulaProfesionalGuardada(): string {
   return localStorage.getItem(`cedulaProfesional_${idUsuario}`) || '';
 }
 
+guardarMedicamentoPropio(idMedicamento: number): void {
+  if (this.isBrowser) {
+    const idUsuario = this.getIdUsuario();
+    if (idUsuario) {
+      const clave = `medicamentos_propios_${idUsuario}`;
+      const actuales = JSON.parse(localStorage.getItem(clave) || '[]') as number[];
+      if (!actuales.includes(idMedicamento)) {
+        actuales.push(idMedicamento);
+        localStorage.setItem(clave, JSON.stringify(actuales));
+      }
+    }
+  }
+}
+
+getMedicamentosPropios(): number[] {
+  if (!this.isBrowser) return [];
+  const idUsuario = this.getIdUsuario();
+  if (!idUsuario) return [];
+  const clave = `medicamentos_propios_${idUsuario}`;
+  return JSON.parse(localStorage.getItem(clave) || '[]') as number[];
+}
+
   isAuthenticated(): boolean {
     if (!this.isBrowser) return false;
     return !!localStorage.getItem('user') && !!localStorage.getItem('rol');
