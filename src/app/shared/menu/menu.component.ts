@@ -71,18 +71,16 @@ import { AuthService } from '../../services/auth.service';
       transition: background-color 0.2s ease;
     }
 
-    /* Hover */
     .menu a:hover {
       background-color: rgba(255, 255, 255, 0.05);
     }
 
     .menu a.active {
-      background-color: #2d5f8f; /* El azul acero exacto de la selección en el cliente */
+      background-color: #2d5f8f;
       color: #ffffff;
       font-weight: 500;
     }
 
-    /* Botón de cerrar sesión plano */
     .logout-link {
       background: none;
       border: none;
@@ -100,7 +98,6 @@ import { AuthService } from '../../services/auth.service';
     .logout-link:hover {
       background-color: rgba(255, 255, 255, 0.05);
     }
-
   `]
 })
 export class MenuComponent implements OnInit {
@@ -121,9 +118,6 @@ export class MenuComponent implements OnInit {
 
     this.menuItems = this.authService.getMenuItems();
 
-    console.log('ROL:', this.userRol);
-    console.log('MENU:', this.menuItems);
-
     if (!this.menuItems || this.menuItems.length === 0) {
       const rol = this.userRol.toLowerCase();
 
@@ -134,11 +128,7 @@ export class MenuComponent implements OnInit {
           { label: 'Recetas', route: '/recetas' },
           { label: 'Medicamentos', route: '/medicamentos' },
           { icon: 'inventory', label: 'Inventario', route: '/admin/productos' },
-          { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' },
-
-          // { label: 'Carrito', route: '/carrito' },
-          // { label: 'Compras', route: '/compras' }
-
+          { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' }
         ];
       } else if (rol === 'medico') {
         this.menuItems = [
@@ -146,7 +136,7 @@ export class MenuComponent implements OnInit {
           { label: 'Medicamentos', route: '/medico/medicamentos' },
           { label: 'Recetas', route: '/medico/recetas' }
         ];
-      } else {
+      } else if (rol === 'cliente' || rol === 'cuidador') {
         this.menuItems = [
           { label: 'Inicio', route: '/cliente/inicio' },
           { label: 'Carrito', route: '/cliente/carrito' },

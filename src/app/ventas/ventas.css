@@ -28,16 +28,17 @@
 
 * {
   box-sizing: border-box;
+  
 }
-
+section{
+  background-color: #6b7290; 
+}
 
 /* ===================== Página ===================== */
 
 .ventas-page {
 
-  background: var(--bg-page);
-  min-height: 100%;
-  padding: 24px;
+  background:white;
 
 }
 
@@ -704,4 +705,20 @@ tbody tr:hover {
 
  }
 
+}
+.container.compras0 {
+  background-color: #e5e7eb; 
+  padding: 2rem 1rem;       
+  border-radius: 10px;          
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.comprasContainer {
+  background-color: #ffffff; 
+  border-radius: 16px;      
+  padding: 1rem;          
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
+  max-width: 1200px;       
+  margin: 0 auto;            
 }

@@ -40,7 +40,8 @@ export interface RutasPorRol {
 export enum Roles {
   ADMINISTRADOR = 'administrador',
   MEDICO = 'medico',
-  CLIENTE = 'cliente'
+  CLIENTE = 'cliente',
+  CUIDADOR = 'cuidador'
 }
 
 export enum HttpStatus {
@@ -79,7 +80,8 @@ export const SUCCESS_MESSAGES = {
 export const RUTAS_POR_ROL: RutasPorRol = {
   [Roles.ADMINISTRADOR]: '/admin/dashboard',
   [Roles.MEDICO]: '/medico/expediente-clinico',
-  [Roles.CLIENTE]: '/cliente/carrito'
+  [Roles.CLIENTE]: '/cliente/carrito',
+  [Roles.CUIDADOR]: '/cliente/carrito'
 };
 
 export const DEFAULT_LOGIN_CONFIG: LoginConfig = {

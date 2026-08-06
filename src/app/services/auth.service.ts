@@ -120,7 +120,6 @@ export class AuthService {
         // { icon: 'shopping_cart', label: 'Carrito', route: '/admin/carrito' },
         // { icon: 'receipt', label: 'Compras', route: '/admin/compras' },
         { icon: 'groups', label: 'Pacientes', route: '/admin/expediente-clinico' },
-        { icon: 'badge', label: 'Empleados', route: '/admin/empleados' },
         { icon: 'admin_panel_settings', label: 'Roles', route: '/admin/roles' },
         { icon: 'point_of_sale', label: 'Ventas', route: '/admin/ventas' },
         { icon: 'inventory', label: 'Inventario', route: '/admin/productos' },
@@ -133,6 +132,12 @@ export class AuthService {
 
       ],
       'cliente': [
+        { icon: 'home', label: 'Inicio', route: '/cliente/inicio' },
+        { icon: 'shopping_cart', label: 'Carrito', route: '/cliente/carrito' },
+        { icon: 'receipt', label: 'Mis Compras', route: '/cliente/compras' },
+        { icon: 'medical_services', label: 'Mis Recetas', route: '/cliente/recetas' }
+      ],
+      'cuidador': [
         { icon: 'home', label: 'Inicio', route: '/cliente/inicio' },
         { icon: 'shopping_cart', label: 'Carrito', route: '/cliente/carrito' },
         { icon: 'receipt', label: 'Mis Compras', route: '/cliente/compras' },

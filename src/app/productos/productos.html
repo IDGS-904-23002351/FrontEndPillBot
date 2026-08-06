@@ -1,9 +1,8 @@
-<!-- src/app/pages/productos/productos.html -->
+
 <div class="productos-container">
-  <!-- HEADER -->
   <header class="productos-header">
     <div class="header-left">
-      <h1>📦 Gestión de Productos</h1>
+      <h1>Gestión de Productos</h1>
       <div class="stats">
         <span class="stat-item">
           <span class="stat-dot active"></span>
@@ -19,11 +18,10 @@
       </div>
     </div>
     <button class="btn-crear" (click)="abrirCrear()">
-      <span>➕</span> Nuevo Producto
+      <span></span> Nuevo Producto
     </button>
   </header>
 
-  <!-- BARRA DE BÚSQUEDA -->
   <div class="search-bar">
     <div class="search-wrapper">
       <span class="search-icon">🔍</span>
@@ -35,23 +33,17 @@
       />
     </div>
     <button class="btn-refresh" (click)="cargarProductos()" title="Actualizar">
-      🔄
     </button>
   </div>
-
-  <!-- ESTADO DE CARGA -->
   <div *ngIf="cargando" class="loading-state">
     <div class="spinner"></div>
     <p>Cargando productos...</p>
   </div>
-
-  <!-- ERROR -->
   <div *ngIf="errorCarga && !cargando" class="error-state">
-    <p>⚠️ {{ errorCarga }}</p>
+    <p>{{ errorCarga }}</p>
     <button (click)="cargarProductos()" class="btn-retry">Reintentar</button>
   </div>
 
-  <!-- TABLA DE PRODUCTOS -->
   <div *ngIf="!cargando && !errorCarga" class="table-wrapper">
     <table class="productos-table">
       <thead>
@@ -107,7 +99,6 @@
     </table>
   </div>
 
-  <!-- ========== MODAL: VER ========== -->
   <div class="modal-overlay" *ngIf="modal === 'ver'" (click)="cerrarModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -129,7 +120,7 @@
               class="detail-img"
             />
             <div *ngIf="!productoSeleccionado.foto || productoSeleccionado.foto.trim() === ''" class="detail-no-image">
-              💊
+              
             </div>
           </div>
         </div>
@@ -158,8 +149,6 @@
       </div>
     </div>
   </div>
-
-  <!-- ========== MODAL: CREAR / EDITAR ========== -->
   <div class="modal-overlay" *ngIf="modal === 'crear' || modal === 'editar'" (click)="cerrarModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -247,10 +236,8 @@
             <span class="toggle-label">{{ productoForm.activo ? 'Activo' : 'Inactivo' }}</span>
           </div>
         </div>
-
-        <!-- Error del formulario -->
         <div *ngIf="errorFormulario" class="form-error">
-          ⚠️ {{ errorFormulario }}
+          {{ errorFormulario }}
         </div>
 
         <!-- Botones -->

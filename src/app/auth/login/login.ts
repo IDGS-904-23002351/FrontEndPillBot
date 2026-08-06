@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators'; // 1. IMPORTAR finalize
+import { finalize } from 'rxjs/operators'; 
 import { AuthService } from '../../services/auth.service';
 import {
   LoginCredentials,
@@ -61,7 +61,6 @@ export class LoginComponent {
     this.authService.login(credentials)
       .pipe(
         finalize(() => {
-          // Se ejecuta SIEMPRE que termine la petición (éxito o error)
           this.loading = false;
           this.cdr.detectChanges();
         })
