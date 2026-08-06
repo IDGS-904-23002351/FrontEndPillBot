@@ -1,4 +1,4 @@
-// src/app/services/usuario.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -21,21 +21,18 @@ export class UsuarioService {
     });
   }
 
-  // Obtener todos los usuarios
   getUsuarios(): Observable<ApiResponse<Usuario[]>> {
     return this.http.get<ApiResponse<Usuario[]>>(`${this.apiUrl}/usuario`, {
       headers: this.getHeaders()
     });
   }
 
-  // Obtener usuario por ID
   getUsuarioById(id: number): Observable<ApiResponse<Usuario>> {
     return this.http.get<ApiResponse<Usuario>>(`${this.apiUrl}/usuarioBuscar/${id}`, {
       headers: this.getHeaders()
     });
   }
 
-  // Registrar nuevo usuario
   registrarUsuario(usuario: UsuarioRegistroDto): Observable<ApiResponse<Usuario>> {
     return this.http.post<ApiResponse<Usuario>>(
       `${this.apiUrl}/agregarUsuario`,
@@ -44,7 +41,6 @@ export class UsuarioService {
     );
   }
 
-  // Actualizar usuario
   actualizarUsuario(id: number, usuario: UsuarioActualizacionDto): Observable<ApiResponse<boolean>> {
     return this.http.put<ApiResponse<boolean>>(
       `${this.apiUrl}/modificarUsuario/${id}`,
@@ -53,7 +49,6 @@ export class UsuarioService {
     );
   }
 
-  // Desactivar usuario
   desactivarUsuario(id: number): Observable<ApiResponse<boolean>> {
     return this.http.put<ApiResponse<boolean>>(
       `${this.apiUrl}/desactivar/${id}`,
