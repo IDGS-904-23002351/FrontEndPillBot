@@ -141,7 +141,6 @@
 .icono-editar { color: var(--blue-accent); }
 .icono-editar:hover { background: #e8edfd; color: var(--blue-accent-hover); }
 
-/* ===================== Modales (idéntico al patrón de Recetas) ===================== */
 .modal-overlay {
   position: fixed;
   inset: 0;

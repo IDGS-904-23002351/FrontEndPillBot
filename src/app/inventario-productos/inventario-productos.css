@@ -1,4 +1,4 @@
-/* ===================== Paleta / variables ===================== */
+
 :host {
   --navy: #1b2559;
   --navy-soft: #2a3570;
@@ -17,9 +17,6 @@
   display: block;
   font-family: 'Segoe UI', Roboto, Arial, sans-serif;
 }
-
-
-/* ===================== Contenedor general ===================== */
 
 .inventario-page {
   background: var(--bg-page);
@@ -51,9 +48,6 @@
   font-size: 14px;
 }
 
-
-/* ===================== Botón principal ===================== */
-
 .btn-recargar {
   background: var(--blue-accent);
   color: white;
@@ -68,9 +62,6 @@
 .btn-recargar:hover {
   background: var(--blue-accent-hover);
 }
-
-
-/* ===================== Mensajes ===================== */
 
 .mensaje {
   padding: 12px 15px;
@@ -89,10 +80,6 @@
   background: #fbe8ec;
   color: var(--danger);
 }
-
-
-/* ===================== Resumen ===================== */
-
 .resumen-grid {
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -122,11 +109,6 @@
   font-size:24px;
 }
 
-
-
-/* ===================== Tarjeta tabla ===================== */
-
-
 .tarjeta-inventario {
 
   background:white;
@@ -135,10 +117,6 @@
   box-shadow:0 2px 10px rgba(27,37,89,.06);
 
 }
-
-
-/* ===================== Barra búsqueda ===================== */
-
 .barra-herramientas {
 
  display:flex;
@@ -178,11 +156,6 @@
  font-weight:600;
 
 }
-
-
-
-/* ===================== Tabla ===================== */
-
 
 .tabla-container {
 
@@ -256,10 +229,6 @@ tbody tr:hover {
 
 }
 
-
-
-/* ===================== Estados ===================== */
-
 .estado-stock {
 
  display:inline-block;
@@ -294,10 +263,6 @@ tbody tr:hover {
 
 }
 
-
-
-/* ===================== Acciones ===================== */
-
 .btn-editar {
 
  background:var(--blue-accent);
@@ -316,9 +281,6 @@ tbody tr:hover {
  background:var(--blue-accent-hover);
 
 }
-
-
-/* ===================== Modales ===================== */
 
 .modal-fondo {
   position: fixed;
@@ -341,10 +303,6 @@ tbody tr:hover {
   overflow-y: auto;
   box-shadow: 0 12px 40px rgba(27, 37, 89, 0.25);
 }
-
-
-
-/* Encabezado */
 
 .modal-encabezado {
 
@@ -393,11 +351,6 @@ tbody tr:hover {
   color:#1b2559;
 
 }
-
-
-
-/* Información del producto */
-
 .detalle-producto {
 
   padding:20px 22px;
@@ -435,11 +388,6 @@ tbody tr:hover {
   font-size:15px;
 
 }
-
-
-
-/* Campo formulario */
-
 .campo-formulario {
 
   padding:0 22px;
@@ -485,10 +433,6 @@ tbody tr:hover {
   line-height:1.4;
 
 }
-
-
-
-/* Botones inferiores */
 
 .modal-acciones {
 

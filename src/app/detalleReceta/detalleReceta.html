@@ -78,7 +78,6 @@
   </div>
 </div>
 
-<!-- ===================== MODAL: CREAR / EDITAR DETALLE ===================== -->
 <div class="modal-overlay" *ngIf="(modal() === 'crear' || modal() === 'editar') && puedeEditar()">
   <div class="modal-caja">
     <div class="modal-encabezado">
@@ -87,8 +86,6 @@
     </div>
 
     <form class="modal-cuerpo formulario" (ngSubmit)="guardarDetalle()">
-
-      <!-- id_receta NO se muestra: se toma automáticamente de la receta seleccionada -->
 
       <div class="campo">
         <label for="idMedicamento">Medicamento <span class="obligatorio">*</span></label>
